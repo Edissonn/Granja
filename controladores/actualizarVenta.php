@@ -9,7 +9,6 @@ $obj_conexion = new Conexion();
 $conexion = $obj_conexion->conectar();
 
 if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_POST['pk_venta'])) {
-
 	//Insertar con datos de usuario
 	if (isset($_POST['pk_cliente'])) {
 		$pk_usuario = $_POST['pk_usuario'];

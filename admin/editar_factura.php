@@ -52,14 +52,14 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin'])) {
 	<link rel="stylesheet" type="text/css" href="../css/sweetalert.css">
 	<link href="../css/font-awesome.css" rel="stylesheet">
 	<style>
-		.selected{
-			cursor: pointer;
-		}
-		.selected:hover{
-			background-color: #4BB036;
-			color: white;
-		}
-	</style>
+	.selected{
+		cursor: pointer;
+	}
+	.selected:hover{
+		background-color: #4BB036;
+		color: white;
+	}
+</style>
 </head>
 
 <body>
@@ -645,7 +645,7 @@ function midificarCantC(id_fila){
 								$.ajax({
 									url:'../controladores/insertarVentaProducto.php',
 									type: 'POST',
-									data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta},
+									data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta,factura:venta_factura},
 									cache: false,
 									success: function(resultado){
 									}
@@ -689,12 +689,12 @@ function midificarCantC(id_fila){
 			$.ajax({
 				url:'../controladores/actualizarVenta.php',
 				type: 'POST',
-				data:{pk_venta:<?php echo $_GET['pk_venta']; ?>,total:totalFinal,pk_usuario:<?php echo $_SESSION['pk_admin']; ?>,cantPago:cantPago,factura:venta_factura},
+				data:{pk_venta:<?php echo $_GET['pk_venta']; ?>,total:totalFinal,pk_usuario:<?php echo $_SESSION['pk_admin']; ?>,factura:venta_factura},
 				cache: false,
 				success: function(resultado){
 					var pk_venta = "<?php echo $_GET['pk_venta']; ?>";
 					if (resultado=="true") {
-						pk_venta=resultado;
+						
 						for (var i = 0; i < arrayIds.length; i++) {
 							var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
 							var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
