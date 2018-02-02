@@ -37,7 +37,7 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
 			$_SESSION['nombre_admin'] = $nombre;
 			$_SESSION['pk_admin'] = $arrayRes[0]['pk_usuario'];
 			$_SESSION['time_login'] = time();
-			$_SESSION['time_incative'] = 60;
+			$_SESSION['time_incative'] = 600;
 			header("location: ../../admin/index.php");
 		}else{
 			//Inicio session usuario, y se manda el nombre completo y su PK
@@ -45,7 +45,7 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
 			$_SESSION['nombre_user'] = $nombre;
 			$_SESSION['pk_usuario'] = $arrayRes[0]['pk_usuario'];
 			$_SESSION['time_login'] = time();
-			$_SESSION['time_incative'] = 60;
+			$_SESSION['time_incative'] = 600;
 			header("location: ../../user/index.php");
 		}
 	}else{
