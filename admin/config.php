@@ -85,9 +85,30 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 	<br>
 	<div class="container">
 		<div class="jumbotron">
-			<form action="../controladores/insertar_proveedor.php" method="POST" enctype="multipart/form-data">
+			<form action="../controladores/saveConfig.php" method="POST">
 				<div class="container">
-					
+					<table class="table table-hover table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>Tipo de Usuario</th>
+								<th>Tiempo de Inactividad en minutos</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<strong style="color: black;">Administrador</strong>
+								</td>
+								<td>
+									<input type="number" min="1" max="40" step="1.0" name="time_activity" id="time_activity" class="form-control">
+								</td>
+								<td>
+									<input type="submit" name="save" value="Guardar" id="save" class="form-control btn btn-success">
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</form>
 		</div>
