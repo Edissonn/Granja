@@ -52,14 +52,14 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin'])) {
 	<link rel="stylesheet" type="text/css" href="../css/sweetalert.css">
 	<link href="../css/font-awesome.css" rel="stylesheet">
 	<style>
-		.selected{
-			cursor: pointer;
-		}
-		.selected:hover{
-			background-color: #4BB036;
-			color: white;
-		}
-	</style>
+	.selected{
+		cursor: pointer;
+	}
+	.selected:hover{
+		background-color: #4BB036;
+		color: white;
+	}
+</style>
 </head>
 
 <body>
@@ -594,112 +594,63 @@ function midificarCantC(id_fila){
 		}
 		
 		if (pk_cliente!="") {
-			
-			if (cantPago>=totalFinal) {
-				//INSERTAR CON DATOS DE CLIENTE
-				$.ajax({
-					url:'../controladores/registrarVenta.php',
-					type: 'POST',
-					data:{pk_usuario:<?php echo $_SESSION['pk_admin']; ?>,total:totalFinal,pk_cliente:pk_cliente,cantPago:cantPago,cambio:cambio,factura:venta_factura},
-					cache: false,
-					success: function(resultado){
-						
-						var pk_venta = "";
-						if (resultado!="false") {
-							pk_venta=resultado;
+			//INSERTAR CON DATOS DE CLIENTE
+			if (venta_factura==0) {
+				if (cantPago>=totalFinal) {
+					insertWithCliente(<?php echo $_SESSION['pk_admin']; ?>,totalFinal,pk_cliente,cantPago,cambio,venta_factura);
+				}else{
+					alert("La cantidad con la que se esta pagando es menor a la que se debe!");
+				}
+			}
 
-							//INSERTAR A LA TABLA DE "Venta_Producto", DETALLES DE VENTA
-							for (var i = 0; i < arrayIds.length; i++) {
-								var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
-								var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
-								var cant_importe = 0;
-								var numId = "check"+arrayIds[i].split("fila")[1];
-								if($("#"+numId).is(":checked")) {
-									var imp = parseFloat($('.'+arrayIds[i]+'').find('td').eq(4).text());
-									cant_importe = (cant_producto*imp);
-								}
-								
-								$.ajax({
-									url:'../controladores/insertarVentaProducto.php',
-									type: 'POST',
-									data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta},
-									cache: false,
-									success: function(resultado){
-									}
-								});
-							}
-
-							//Eliminar todo el contenido de la tabla
-							eliminarTodoFilas();
-							
-							//Reiniciar la variable contador para las filas de la tabla
-							cont=0;
-							//Se limpian los campos
-							$("#pk_cliente").val('');
-							$("#cantidadPago").val('');
-
-							//Limpiar los datos de los arreglos
-							arrayIds.length=0;
-							arraySubTotales.length=0;
-
-							swal({
-								position: 'top-center',
-								type: 'success',
-								title: 'Venta realizada con exito!!',
-								showConfirmButton: false,
-								timer: 3000
-							});
-
-							if (venta_factura==0) {
-								var url = 'ticket.php?pk_venta='+pk_venta;
-								window.open(url, '_blank');
-							}else{
-								var url = 'factura.php?pk_venta='+pk_venta+"&view=printer";
-								window.open(url, '_blank');
-							}
-							
-							window.location.href = "ventas.php";
-							
-						}else{
-							alert(resultado);
-						}
-					}
-				});
-			}else{
-				alert("La cantidad con la que se esta pagando es menor a la que se debe!");
+			if (venta_factura==1) {
+				insertWithCliente(<?php echo $_SESSION['pk_admin']; ?>,totalFinal,pk_cliente,cantPago,cambio,venta_factura);
 			}
 		}else{
 			//INSERTAR SIN DATOS DEL CLIENTE
-			if (cantPago>=totalFinal) {
-				$.ajax({
-					url:'../controladores/registrarVenta.php',
-					type: 'POST',
-					data:{pk_usuario:<?php echo $_SESSION['pk_admin']; ?>,total:totalFinal,cantPago:cantPago,cambio:cambio,factura:venta_factura},
-					cache: false,
-					success: function(resultado){
-						var pk_venta="";
-						if (resultado!="false") {
-							pk_venta=resultado;
-							for (var i = 0; i < arrayIds.length; i++) {
-								var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
-								var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
-								var cant_importe = 0;
-								var numId = "check"+arrayIds[i].split("fila")[1];
-								if($("#"+numId).is(":checked")) {
-									var imp = parseFloat($('.'+arrayIds[i]+'').find('td').eq(4).text());
-									cant_importe = (cant_producto*imp);
-								}
-								
-								$.ajax({
-									url:'../controladores/insertarVentaProducto.php',
-									type: 'POST',
-									data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta},
-									cache: false,
-									success: function(resultado){
-									}
-								});
+			if (venta_factura==0) {
+				if (cantPago>=totalFinal) {
+					insertNullCliente(<?php echo $_SESSION['pk_admin']; ?>,totalFinal,cantPago,cambio,venta_factura);
+				}else{
+					alert("La cantidad con la que se esta pagando es menor a la que se debe!");
+				}
+			}
+			if (venta_factura==1) {
+				insertNullCliente(<?php echo $_SESSION['pk_admin']; ?>,totalFinal,cantPago,cambio,venta_factura);
+			}
+		}
+	}
+
+	function insertNullCliente(pk_usuario,totalFinal,cantPago,cambio,venta_factura) {
+		$.ajax({
+			url:'../controladores/registrarVenta.php',
+			type: 'POST',
+			data:{pk_usuario:pk_usuario,total:totalFinal,cantPago:cantPago,cambio:cambio,factura:venta_factura},
+			cache: false,
+			success: function(resultado){
+				var pk_venta="";
+				if (resultado!="false") {
+					pk_venta=resultado;
+					for (var i = 0; i < arrayIds.length; i++) {
+						var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
+						var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
+						var cant_importe = 0;
+						var numId = "check"+arrayIds[i].split("fila")[1];
+						if($("#"+numId).is(":checked")) {
+							var imp = parseFloat($('.'+arrayIds[i]+'').find('td').eq(4).text());
+							cant_importe = (cant_producto*imp);
+						}
+
+						$.ajax({
+							url:'../controladores/insertarVentaProducto.php',
+							type: 'POST',
+							data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta},
+							cache: false,
+							success: function(resultado){
 							}
-							
+						});
+					}
+
 							//Eliminar todo el contenido de la tabla
 							eliminarTodoFilas();
 							//Limpiar los datos de los arreglos
@@ -737,11 +688,77 @@ function midificarCantC(id_fila){
 						
 					}
 				});
-			}else{
-				alert("La cantidad con la que se esta pagando es menor a la que se debe!");
+	}
+
+	function insertWithCliente(pk_usuario,totalFinal,pk_cliente,cantPago,cambio,venta_factura) {
+		$.ajax({
+			url:'../controladores/registrarVenta.php',
+			type: 'POST',
+			data:{pk_usuario:pk_usuario,total:totalFinal,pk_cliente:pk_cliente,cantPago:cantPago,cambio:cambio,factura:venta_factura},
+			cache: false,
+			success: function(resultado){
+				
+				var pk_venta = "";
+				if (resultado!="false") {
+					pk_venta=resultado;
+
+					//INSERTAR A LA TABLA DE "Venta_Producto", DETALLES DE VENTA
+					for (var i = 0; i < arrayIds.length; i++) {
+						var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
+						var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
+						var cant_importe = 0;
+						var numId = "check"+arrayIds[i].split("fila")[1];
+						if($("#"+numId).is(":checked")) {
+							var imp = parseFloat($('.'+arrayIds[i]+'').find('td').eq(4).text());
+							cant_importe = (cant_producto*imp);
+						}
+						
+						$.ajax({
+							url:'../controladores/insertarVentaProducto.php',
+							type: 'POST',
+							data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta},
+							cache: false,
+							success: function(resultado){
+							}
+						});
+					}
+
+					//Eliminar todo el contenido de la tabla
+					eliminarTodoFilas();
+					
+					//Reiniciar la variable contador para las filas de la tabla
+					cont=0;
+					//Se limpian los campos
+					$("#pk_cliente").val('');
+					$("#cantidadPago").val('');
+
+					//Limpiar los datos de los arreglos
+					arrayIds.length=0;
+					arraySubTotales.length=0;
+
+					swal({
+						position: 'top-center',
+						type: 'success',
+						title: 'Venta realizada con exito!!',
+						showConfirmButton: false,
+						timer: 3000
+					});
+
+					if (venta_factura==0) {
+						var url = 'ticket.php?pk_venta='+pk_venta;
+						window.open(url, '_blank');
+					}else{
+						var url = 'factura.php?pk_venta='+pk_venta+"&view=printer";
+						window.open(url, '_blank');
+					}
+					
+					window.location.href = "ventas.php";
+					
+				}else{
+					alert(resultado);
+				}
 			}
-			
-		}
+		});
 	}
 
 </script>

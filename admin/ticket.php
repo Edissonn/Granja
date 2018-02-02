@@ -283,7 +283,7 @@ $pdf->Cell(0,0,'lucion.',0,1,'L');
 
 try {
 	$pdf->AutoPrint(true);
-	$pdf->Output("ticket.pdf",'F');
+	//$pdf->Output("ticket.pdf",'F');
 	$pdf->Output();
 } catch (Exception $e) {
 	echo 'Excepción capturada: ',  $e->getMessage(), "\n";
