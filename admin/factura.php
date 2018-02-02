@@ -1,6 +1,16 @@
 <?php
 session_start();
-if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_GET['pk_venta'])) {
+
+if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_GET['pk_venta']) && isset($_SESSION['time_incative']) && isset($_SESSION['time_login'])) {
+
+	//Se valida el tiempo de inactividad de la session
+	$current_sinIn = (time() - $_SESSION['time_login']);
+	if ($current_sinIn > $_SESSION['time_incative']) {
+		session_destroy();
+		header('location: ../index.php');
+	}else{
+		$_SESSION['time_login'] = time();
+	}
 
 	$pk_venta =  $_GET['pk_venta'];
 
@@ -36,10 +46,10 @@ if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_
 	<link href="../css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
 
 	<style>@import url(http://fonts.googleapis.com/css?family=Bree+Serif);
-		body, h1, h2, h3, h4, h5, h6{
-			font-family: 'Bree Serif', serif;
-		}
-	</style>
+	body, h1, h2, h3, h4, h5, h6{
+		font-family: 'Bree Serif', serif;
+	}
+</style>
 </head>
 <body>
 	<?php

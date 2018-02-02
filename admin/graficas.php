@@ -9,10 +9,20 @@ session_start();
 $nombre = "";
 
 //Validar si se ha iniciado session correctamente, y si los datos de la sesion estan puestos
-if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin'])) {
+if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset($_SESSION['time_login']) && !isset($_SESSION['time_incative'])) {
 	//Redirecciona al usuario al inicio o pagina principal
 	header("location: ../index.php");
 }else{
+
+	//Se valida el tiempo de inactividad de la session
+	$current_sinIn = (time() - $_SESSION['time_login']);
+	if ($current_sinIn > $_SESSION['time_incative']) {
+		session_destroy();
+		header('location: ../index.php');
+	}else{
+		$_SESSION['time_login'] = time();
+	}
+
 	//Se agrega la conexion de PDO
 	require_once('../conexion.php');
 

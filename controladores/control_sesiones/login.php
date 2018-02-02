@@ -36,12 +36,16 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
 			$nombre = $arrayRes[0]['nombre']." ".$arrayRes[0]['apellidos'];
 			$_SESSION['nombre_admin'] = $nombre;
 			$_SESSION['pk_admin'] = $arrayRes[0]['pk_usuario'];
+			$_SESSION['time_login'] = time();
+			$_SESSION['time_incative'] = 60;
 			header("location: ../../admin/index.php");
 		}else{
 			//Inicio session usuario, y se manda el nombre completo y su PK
 			$nombre = $arrayRes[0]['nombre']." ".$arrayRes[0]['apellidos'];
 			$_SESSION['nombre_user'] = $nombre;
 			$_SESSION['pk_usuario'] = $arrayRes[0]['pk_usuario'];
+			$_SESSION['time_login'] = time();
+			$_SESSION['time_incative'] = 60;
 			header("location: ../../user/index.php");
 		}
 	}else{

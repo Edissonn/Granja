@@ -1,4 +1,15 @@
 <?php
+session_start();
+
+//Se valida el tiempo de inactividad de la session
+$current_sinIn = (time() - $_SESSION['time_login']);
+if ($current_sinIn > $_SESSION['time_incative']) {
+	session_destroy();
+	header('location: ../index.php');
+}else{
+	$_SESSION['time_login'] = time();
+}
+
 header("Content-Type: text/html;charset=utf-8");
 //Se incluye la libreria FPDF
 require('../fpdf181/fpdf.php');
