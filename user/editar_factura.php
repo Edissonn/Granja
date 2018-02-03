@@ -87,7 +87,7 @@ if (!isset($_SESSION['nombre_user']) && !isset($_SESSION['pk_usuario']) && !isse
 	<br>
 	<br>
 	<div class="container">
-		<h2 class="title-w3-agileits inner">Ventas</h2>
+		<h2 class="title-w3-agileits inner">Actualizacion de Factura #00<?php echo $_GET['pk_venta']; ?></h2>
 		<p class="quia">El paraiso Granja organica sostenible</p>
 	</div>
 	<br>
@@ -105,9 +105,15 @@ if (!isset($_SESSION['nombre_user']) && !isset($_SESSION['pk_usuario']) && !isse
 			if ($obtener_cliente->rowCount()>0) {
 				$res_unidades = $obtener_cliente->fetchAll();
 				foreach ($res_unidades as $value) {
-					?>
-					<option value="<?php echo $value['pk_cliente']; ?>"><?php echo $value['nombre_cliente']; ?></option>
-					<?php
+					if ($value['nombre_cliente']==$_GET['cliente']) {
+						?>
+						<option value="<?php echo $value['pk_cliente']; ?>" selected="selected"><?php echo $value['nombre_cliente']; ?></option>
+						<?php
+					}else{
+						?>
+						<option value="<?php echo $value['pk_cliente']; ?>"><?php echo $value['nombre_cliente']; ?></option>
+						<?php
+					}
 				}
 			}else{
 				?>
@@ -158,15 +164,12 @@ if (!isset($_SESSION['nombre_user']) && !isset($_SESSION['pk_usuario']) && !isse
 				</div>
 			</div>
 			<br>
-			<label>Cantidad de pago</label>
-			<input type="number" name="cantidadPago" id="cantidadPago" min="1" class="form-control">
-			<br>
 			<div align="center">
-				<button class="btn btn-success btn-lg" id="btnVenta" onclick="obtenerTodos(arrayIds,0);"><i class="fa fa-shopping-cart"> Realizar Venta</i></button>
-				<button class="btn btn-success btn-lg" id="btnFactura" onclick="obtenerTodos(arrayIds,1);"><i class="fa fa-shopping-cart"> Facturar</i></button>
+				<!-- <button class="btn btn-success btn-lg" id="btnVenta" onclick="obtenerTodos(arrayIds,0);"><i class="fa fa-shopping-cart"> Realizar Venta</i></button> -->
+				<button class="btn btn-success btn-lg" id="btnFactura" onclick="obtenerTodos(arrayIds,1);"><i class="fa fa-shopping-cart"> Guardar Cambios</i></button>
 			</div>
-			
-			
+
+
 		</div>
 	</div>
 	<br>
@@ -249,12 +252,13 @@ if (!isset($_SESSION['nombre_user']) && !isset($_SESSION['pk_usuario']) && !isse
 	//Variable para lod IDs de cada fila que se agrege de cada producto
 	var cont=0;
 
+	var codigoBarras = "";
 	$(document).ready(function(){
 		//Ocultar el bonton de realizacion de la venta, hasta que se agregen productos
 		$("#btnVenta").hide();
 		$("#btnFactura").hide();
 		//Variable para almecenar el codigo de barra escaneado
-		var codigoBarras = "";
+		
 		$("#textCodigoBarras").change(function() {
 			codigoBarras = $("#textCodigoBarras").val();
 			//Mostrar la ventana para la cantidad del producto
@@ -263,6 +267,23 @@ if (!isset($_SESSION['nombre_user']) && !isset($_SESSION['pk_usuario']) && !isse
 
 		$("#btnOk").click(function(){
 			var cantidadComprada = parseFloat($("#cantProducto").val());
+			AddProducto(codigoBarras, cantidadComprada);
+		});
+
+		//Se cargan todo los datos de la factura
+		<?php
+		$array_codp = explode(',', $_GET['codbarr']);
+		$array_cantp = explode(',', $_GET['cantP']);
+		foreach ($array_codp as $key => $value) {
+			?>
+			AddProducto(<?php echo $value; ?>, <?php echo $array_cantp[$key]; ?>);
+			<?php
+		}
+		?>
+
+	});
+
+	function AddProducto(codigoBarras, cantidadComprada){
 			//Sacar los producto escaneado y agregarlo a la tabla de detalle de venta
 			$.ajax({
 				url:'../controladores/obtenerProductoEscaner.php',
@@ -271,8 +292,7 @@ if (!isset($_SESSION['nombre_user']) && !isset($_SESSION['pk_usuario']) && !isse
 				cache: false,
 				success: function(resultado){
 					if (resultado!="false" && resultado!="!stok") {
-						try{
-							var json = JSON.parse(resultado);
+						var json = JSON.parse(resultado);
 						//Ciclo para recorrer todos los elementos del JSON
 						$(json).each(function(index, value){
 							cont++;
@@ -363,9 +383,6 @@ if (!isset($_SESSION['nombre_user']) && !isset($_SESSION['pk_usuario']) && !isse
 							$("#cantProducto").val('1');
 
 						});
-}catch(err){
-	console.log(err.message);
-}
 }else{
 					//Cerrar la ventana para la cantidad del producto
 					$("#myModalCantidad").modal('hide');
@@ -381,9 +398,7 @@ if (!isset($_SESSION['nombre_user']) && !isset($_SESSION['pk_usuario']) && !isse
 			}
 		});
 $("#textCodigoBarras").val('');
-});
-
-});
+}
 
 var Idfila;
 function midificarCantC(id_fila){
@@ -573,8 +588,9 @@ function midificarCantC(id_fila){
 
 	function obtenerTodos(arrayIds,venta_factura) {
 
-		//Se devuelven todos los productos al Stock, ne caso de ser solo una factura
 		if (venta_factura==1) {
+
+			//Se devuelven todos los productos al Stock, ne caso de ser solo una factura
 			for (var i = 0; i < arrayIds.length; i++) {
 				var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
 				var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
@@ -589,77 +605,125 @@ function midificarCantC(id_fila){
 					}
 				});
 			}
+
+			//Se eliminan todos los productos asociados a la factuta o venta X
+			$.ajax({
+				url:"../controladores/eliminarFactura.php",
+				type:"post",
+				data:{pk_venta_p:<?php echo $_GET['pk_venta']; ?>},
+				cache: false,
+				success: function(data) {
+					console.log(data);
+				}
+			});
+
 		}
 
 		var pk_cliente = $("#pk_cliente").val();
 		var cantPago = parseFloat($("#cantidadPago").val());
-		var cambio=0;
 		var totalFinal = 0;
 		if (arrayImportes.length>0) {
 			totalFinal = calcularTotalYImportes(arraySubTotales);
-			cambio = parseFloat(cantPago-totalFinal);
 		}else{
 			totalFinal = calcularTotal(arraySubTotales);
-			cambio = parseFloat(cantPago-totalFinal);
 		}
 		
 		if (pk_cliente!="") {
-			//INSERTAR CON DATOS DE CLIENTE
-			if (venta_factura==0) {
-				if (cantPago>=totalFinal) {
-					insertWithCliente(<?php echo $_SESSION['pk_usuario']; ?>,totalFinal,pk_cliente,cantPago,cambio,venta_factura);
-				}else{
-					alert("La cantidad con la que se esta pagando es menor a la que se debe!");
-				}
-			}
 
-			if (venta_factura==1) {
-				insertWithCliente(<?php echo $_SESSION['pk_usuario']; ?>,totalFinal,pk_cliente,cantPago,cambio,venta_factura);
-			}
-		}else{
-			//INSERTAR SIN DATOS DEL CLIENTE
-			if (venta_factura==0) {
-				if (cantPago>=totalFinal) {
-					insertNullCliente(<?php echo $_SESSION['pk_usuario']; ?>,totalFinal,cantPago,cambio,venta_factura);
-				}else{
-					alert("La cantidad con la que se esta pagando es menor a la que se debe!");
-				}
-			}
-			if (venta_factura==1) {
-				insertNullCliente(<?php echo $_SESSION['pk_usuario']; ?>,totalFinal,cantPago,cambio,venta_factura);
-			}
-		}
-	}
+				//INSERTAR CON DATOS DE CLIENTE
+				$.ajax({
+					url:'../controladores/actualizarVenta.php',
+					type: 'POST',
+					data:{pk_venta:<?php echo $_GET['pk_venta']; ?>,total:totalFinal,pk_usuario:<?php echo $_SESSION['pk_usuario']; ?>,pk_cliente:pk_cliente,cantPago:cantPago,factura:venta_factura},
+					cache: false,
+					success: function(resultado){
+						console.log(resultado);
+						var pk_venta = "<?php echo $_GET['pk_venta']; ?>";
+						if (resultado=="true") {
 
-	function insertNullCliente(pk_usuario,totalFinal,cantPago,cambio,venta_factura) {
-		$.ajax({
-			url:'../controladores/registrarVenta.php',
-			type: 'POST',
-			data:{pk_usuario:pk_usuario,total:totalFinal,cantPago:cantPago,cambio:cambio,factura:venta_factura},
-			cache: false,
-			success: function(resultado){
-				var pk_venta="";
-				if (resultado!="false") {
-					pk_venta=resultado;
-					for (var i = 0; i < arrayIds.length; i++) {
-						var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
-						var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
-						var cant_importe = 0;
-						var numId = "check"+arrayIds[i].split("fila")[1];
-						if($("#"+numId).is(":checked")) {
-							var imp = parseFloat($('.'+arrayIds[i]+'').find('td').eq(4).text());
-							cant_importe = (cant_producto*imp);
-						}
-
-						$.ajax({
-							url:'../controladores/insertarVentaProducto.php',
-							type: 'POST',
-							data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta},
-							cache: false,
-							success: function(resultado){
+							//INSERTAR A LA TABLA DE "Venta_Producto", DETALLES DE VENTA
+							for (var i = 0; i < arrayIds.length; i++) {
+								var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
+								var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
+								var cant_importe = 0;
+								var numId = "check"+arrayIds[i].split("fila")[1];
+								if($("#"+numId).is(":checked")) {
+									var imp = parseFloat($('.'+arrayIds[i]+'').find('td').eq(4).text());
+									cant_importe = (cant_producto*imp);
+								}
+								
+								$.ajax({
+									url:'../controladores/insertarVentaProducto.php',
+									type: 'POST',
+									data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta,factura:venta_factura},
+									cache: false,
+									success: function(resultado){
+									}
+								});
 							}
-						});
+
+							//Eliminar todo el contenido de la tabla
+							eliminarTodoFilas();
+							
+							//Reiniciar la variable contador para las filas de la tabla
+							cont=0;
+							//Se limpian los campos
+							$("#pk_cliente").val('');
+							$("#cantidadPago").val('');
+
+							//Limpiar los datos de los arreglos
+							arrayIds.length=0;
+							arraySubTotales.length=0;
+
+							swal({
+								position: 'top-center',
+								type: 'success',
+								title: 'Venta realizada con exito!!',
+								showConfirmButton: false,
+								timer: 3000
+							});
+
+							var url = 'factura.php?pk_venta=<?php echo $_GET['pk_venta']; ?>';
+							window.open(url, '_blank');
+
+							window.close();
+							
+						}else{
+							alert(resultado);
+						}
 					}
+				});
+			}else{
+			//INSERTAR SIN DATOS DEL CLIENTE
+
+			$.ajax({
+				url:'../controladores/actualizarVenta.php',
+				type: 'POST',
+				data:{pk_venta:<?php echo $_GET['pk_venta']; ?>,total:totalFinal,pk_usuario:<?php echo $_SESSION['pk_usuario']; ?>,factura:venta_factura},
+				cache: false,
+				success: function(resultado){
+					var pk_venta = "<?php echo $_GET['pk_venta']; ?>";
+					if (resultado=="true") {
+						
+						for (var i = 0; i < arrayIds.length; i++) {
+							var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
+							var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
+							var cant_importe = 0;
+							var numId = "check"+arrayIds[i].split("fila")[1];
+							if($("#"+numId).is(":checked")) {
+								var imp = parseFloat($('.'+arrayIds[i]+'').find('td').eq(4).text());
+								cant_importe = (cant_producto*imp);
+							}
+
+							$.ajax({
+								url:'../controladores/insertarVentaProducto.php',
+								type: 'POST',
+								data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta},
+								cache: false,
+								success: function(resultado){
+								}
+							});
+						}
 
 							//Eliminar todo el contenido de la tabla
 							eliminarTodoFilas();
@@ -682,93 +746,17 @@ function midificarCantC(id_fila){
 								timer: 3000
 							});
 
-							if (venta_factura==0) {
-								var url = 'ticket.php?pk_venta='+pk_venta;
-								window.open(url, '_blank');
-							}else{
-								var url = 'factura.php?pk_venta='+pk_venta+"&view=printer";
-								window.open(url, '_blank');
-							}
+							var url = 'factura.php?pk_venta=<?php echo $_GET['pk_venta']; ?>';
+							window.open(url, '_blank');
 
-							window.location.href = "index.php";
+							window.close();
 
 						}else{
 							alert(resultado);
 						}
-						
 					}
 				});
-	}
-
-	function insertWithCliente(pk_usuario,totalFinal,pk_cliente,cantPago,cambio,venta_factura) {
-		$.ajax({
-			url:'../controladores/registrarVenta.php',
-			type: 'POST',
-			data:{pk_usuario:pk_usuario,total:totalFinal,pk_cliente:pk_cliente,cantPago:cantPago,cambio:cambio,factura:venta_factura},
-			cache: false,
-			success: function(resultado){
-				
-				var pk_venta = "";
-				if (resultado!="false") {
-					pk_venta=resultado;
-
-					//INSERTAR A LA TABLA DE "Venta_Producto", DETALLES DE VENTA
-					for (var i = 0; i < arrayIds.length; i++) {
-						var pk_producto = $('.'+arrayIds[i]+'').find('td').eq(0).text();
-						var cant_producto = parseFloat($('.'+arrayIds[i]+'').find('td').eq(3).text());
-						var cant_importe = 0;
-						var numId = "check"+arrayIds[i].split("fila")[1];
-						if($("#"+numId).is(":checked")) {
-							var imp = parseFloat($('.'+arrayIds[i]+'').find('td').eq(4).text());
-							cant_importe = (cant_producto*imp);
-						}
-						
-						$.ajax({
-							url:'../controladores/insertarVentaProducto.php',
-							type: 'POST',
-							data:{cant_producto:cant_producto,cant_importe:cant_importe,pk_producto:pk_producto,pk_venta:pk_venta},
-							cache: false,
-							success: function(resultado){
-							}
-						});
-					}
-
-					//Eliminar todo el contenido de la tabla
-					eliminarTodoFilas();
-					
-					//Reiniciar la variable contador para las filas de la tabla
-					cont=0;
-					//Se limpian los campos
-					$("#pk_cliente").val('');
-					$("#cantidadPago").val('');
-
-					//Limpiar los datos de los arreglos
-					arrayIds.length=0;
-					arraySubTotales.length=0;
-
-					swal({
-						position: 'top-center',
-						type: 'success',
-						title: 'Venta realizada con exito!!',
-						showConfirmButton: false,
-						timer: 3000
-					});
-
-					if (venta_factura==0) {
-						var url = 'ticket.php?pk_venta='+pk_venta;
-						window.open(url, '_blank');
-					}else{
-						var url = 'factura.php?pk_venta='+pk_venta+"&view=printer";
-						window.open(url, '_blank');
-					}
-					
-					window.location.href = "index.php";
-					
-				}else{
-					alert(resultado);
-				}
-			}
-		});
+		}
 	}
 
 </script>

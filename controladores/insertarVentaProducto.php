@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin'])) {
+if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user']))) {
 	//Se establece la zona horaria por defecto
 	date_default_timezone_set("America/Bahia_Banderas");
 

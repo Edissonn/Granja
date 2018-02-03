@@ -4,7 +4,7 @@ require_once("../conexion.php");
 $obj_conexion = new Conexion();
 $conexion = $obj_conexion->conectar();
 
-if(isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_POST['codigoBarras']) && isset($_POST['cantProducto']))
+if((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && isset($_POST['codigoBarras']) && isset($_POST['cantProducto']))
 {
 
 	$sql = "SELECT p.pk_producto,p.nombre,p.precio,p.importe,pro.nombre_provedor FROM producto p, provedor pro WHERE p.fk_provedor=pro.pk_provedor AND p.codigo_barras=? AND p.stok>=?";
@@ -21,7 +21,7 @@ if(isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_P
 	$result->closeCursor();
 }
 
-if(isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_POST['pk_producto']) && isset($_POST['cantProducto']))
+if((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && isset($_POST['pk_producto']) && isset($_POST['cantProducto']))
 {
 	$sql = "UPDATE producto SET stok=(stok-?) WHERE pk_producto=?";
 	$result = $conexion->prepare($sql);
@@ -32,7 +32,7 @@ if(isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_P
 }
 
 
-if(isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_POST['pk_producto']) && isset($_POST['cantProducto_sum']))
+if((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && isset($_POST['pk_producto']) && isset($_POST['cantProducto_sum']))
 {
 	$sql = "UPDATE producto SET stok=(stok+?) WHERE pk_producto=?";
 	$result = $conexion->prepare($sql);

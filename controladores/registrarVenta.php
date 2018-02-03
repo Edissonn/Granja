@@ -8,7 +8,7 @@ require_once('../conexion.php');
 $obj_conexion = new Conexion();
 $conexion = $obj_conexion->conectar();
 
-if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && !isset($_POST['pk_venta'])) {
+if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && !isset($_POST['pk_venta'])) {
 
 	//Insertar con datos de usuario
 	if (isset($_POST['pk_cliente'])) {
@@ -67,7 +67,7 @@ if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && !isset($
 	}
 }
 
-if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_POST['pk_venta'])) {
+if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && isset($_POST['pk_venta'])) {
 
 	//Buscar en venta_producto los los PKs y cantidades correspondientes a la venta
 		//Reccorres y buscar unu a uno, en la tabla de productos para ver si el Stock cubre la cantidad deseada

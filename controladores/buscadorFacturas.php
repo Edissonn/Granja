@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin'])) {
+if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user']))) {
 
 	require_once("../conexion.php");
 

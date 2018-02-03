@@ -6,7 +6,7 @@ require_once("../conexion.php");
 $obj_conexion = new Conexion();
 $conexion = $obj_conexion->conectar();
 
-if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_POST['array'])) {
+if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && isset($_POST['array'])) {
 
 	//Se recojen los valores a buscar para la consulta
 	$valores_buscar = json_decode($_POST['array'], true);
@@ -261,7 +261,7 @@ if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_
 
 	}
 
-}else if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_POST['venta_id'])) {
+}else if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && isset($_POST['venta_id'])) {
 	$sql = "SELECT p.nombre,p.codigo_barras,p.precio,p.importe,vp.cant_producto,(p.precio*vp.cant_producto) AS subtotal,vp.cant_importe FROM venta v, producto p, venta_producto vp WHERE v.pk_venta=vp.fk_venta AND p.pk_producto=vp.fk_producto AND v.pk_venta=? AND v.factura=0 GROUP BY vp.pk_vp";
 	$statement = $conexion->prepare($sql);
 	$statement->bindParam(1,$_POST['venta_id']);
