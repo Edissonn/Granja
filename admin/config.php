@@ -34,6 +34,32 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 	$nombre = $_SESSION['nombre_admin'];
 
 }
+
+function read()
+{	
+	$timeSession = "Error al obtener el tiempo de la session!!";
+	if (fopen('../admin/timeSession.txt', 'r')) {
+		$archivo = fopen('../admin/timeSession.txt', 'r');
+		$linea = "";
+		while (!feof($archivo)) {
+			$linea = fgets($archivo);
+			//$saltolinea = nl2br($linea);
+		}
+		if ($linea!="") {
+			$base = 60;
+			$minutos = ($linea/$base);
+			if ($minutos>=60) {
+				return "1 Hora";
+			}else{
+				return $minutos." Minutos";
+			}
+		}else{
+			return $timeSession;
+		}
+	}else{
+		return $timeSession;
+	}
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -91,6 +117,7 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 						<thead>
 							<tr>
 								<th>Tipo de Usuario</th>
+								<th>Tiempo actual</th>
 								<th>Tiempo de Inactividad en minutos</th>
 								<th></th>
 							</tr>
@@ -98,10 +125,13 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 						<tbody>
 							<tr>
 								<td>
-									<strong style="color: black;">Administrador</strong>
+									<strong style="color: black;">Administrador / Usuario</strong>
 								</td>
 								<td>
-									<input type="number" min="1" max="40" step="1.0" name="time_activity" id="time_activity" class="form-control">
+									<strong style="color: black;"><?php echo read(); ?></strong>
+								</td>
+								<td>
+									<input type="number" min="1" max="60" step="1.0" name="time_activity" id="time_activity" class="form-control">
 								</td>
 								<td>
 									<input type="submit" name="save" value="Guardar" id="save" class="form-control btn btn-success">

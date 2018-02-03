@@ -37,7 +37,7 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
 			$_SESSION['nombre_admin'] = $nombre;
 			$_SESSION['pk_admin'] = $arrayRes[0]['pk_usuario'];
 			$_SESSION['time_login'] = time();
-			$_SESSION['time_incative'] = 600;
+			$_SESSION['time_incative'] = read();
 			header("location: ../../admin/index.php");
 		}else{
 			//Inicio session usuario, y se manda el nombre completo y su PK
@@ -45,7 +45,7 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
 			$_SESSION['nombre_user'] = $nombre;
 			$_SESSION['pk_usuario'] = $arrayRes[0]['pk_usuario'];
 			$_SESSION['time_login'] = time();
-			$_SESSION['time_incative'] = 600;
+			$_SESSION['time_incative'] = read();
 			header("location: ../../user/index.php");
 		}
 	}else{
@@ -57,5 +57,25 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
 }else{
 	//Si no hay datos, se redirecciona automaticamente al index.php
 	header("location: ../../index.php");
+}
+
+function read()
+{	
+	$timeSession = 600;
+	if (fopen('../../admin/timeSession.txt', 'r')) {
+		$archivo = fopen('../../admin/timeSession.txt', 'r');
+		$linea = "";
+		while (!feof($archivo)) {
+			$linea = fgets($archivo);
+			//$saltolinea = nl2br($linea);
+		}
+		if ($linea!="") {
+			return $linea;
+		}else{
+			return $timeSession;
+		}
+	}else{
+		return $timeSession;
+	}
 }
 ?>
