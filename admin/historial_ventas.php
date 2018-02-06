@@ -222,6 +222,7 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 <script type="text/javascript" src="../js/lightbox.js"></script>
 
 <script type="text/javascript">
+
 	$(document).ready(function(){
 
 		var arrayKV;

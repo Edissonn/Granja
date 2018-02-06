@@ -66,7 +66,7 @@
 											</a>
 											<ul class="dropdown-menu">
 												<li><a href="ventas.php"><i class="glyphicon glyphicon-usd" aria-hidden="true"></i>Ventas</a></li>
-												<li><a href="provedores.php"><i class="glyphicon glyphicon-usd" aria-hidden="true"></i>Cortes de caja</a></li>
+												<li><a href="corte_caja.php"><i class="glyphicon glyphicon-usd" aria-hidden="true"></i>Cortes de caja</a></li>
 												<li><a href="historial_ventas.php"><i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>Historial de ventas</a></li>
 											</ul>
 										</li>

@@ -131,7 +131,7 @@ function read()
 									<strong style="color: black;"><?php echo read(); ?></strong>
 								</td>
 								<td>
-									<input type="number" min="1" max="60" step="1.0" name="time_activity" id="time_activity" class="form-control">
+									<input type="number" min="20" max="60" step="1.0" name="time_activity" id="time_activity" class="form-control">
 								</td>
 								<td>
 									<input type="submit" name="save" value="Guardar" id="save" class="form-control btn btn-success">
