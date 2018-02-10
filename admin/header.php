@@ -57,7 +57,6 @@
 									</ul>
 									<!--  -->
 								</li>
-								<!-- <li class="m_nav_item" id="moble_nav_item_6"> <a href="ventas.php" class="link link--kumya"><i class="glyphicon glyphicon-usd" aria-hidden="true"></i><span data-letters="Ventas">Ventas</span></a></li>-->
 								<li class="m_nav_item" id="moble_nav_item_4">
 									<ul id="m_nav_list" class="m_nav menu__list">
 										<li class="dropdown">
@@ -73,7 +72,6 @@
 									</ul>
 									<!--  -->
 								</li>
-								<!-- <li class="m_nav_item" id="moble_nav_item_6"> <a href="lista_usuarios.php" class="link link--kumya"><i class="glyphicon glyphicon-th-list" aria-hidden="true"></i><span data-letters="Lista de usuarios">Lista de usuarios</span></a></li>-->
 								<li class="m_nav_item" id="moble_nav_item_4">
 									<ul id="m_nav_list" class="m_nav menu__list">
 										<li class="dropdown">
@@ -96,11 +94,10 @@
 											</a>
 											<ul class="dropdown-menu">
 												<li><a href="config.php"><i class="fa fa-users" aria-hidden="true"></i>Tiempo de session</a></li>
-												<li><a href="#"><i class="fa fa-truck" aria-hidden="true"></i>Usuarios</a></li>
+												<li><a href="#"><i class="fa fa-truck" aria-hidden="true"></i>Horario de cortes de caja</a></li>
 											</ul>
 										</li>
 									</ul>
-									<!--  -->
 								</li>
 							</ul>
 						</nav>
