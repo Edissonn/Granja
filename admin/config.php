@@ -207,7 +207,7 @@ function read()
 									</select>
 								</td>
 								<td>
-									<select name="minutos" id="minutos" class="form-control">
+									<select name="turno" id="turno" class="form-control">
 										<option value="am">AM</option>
 										<option value="pm">PM</option>
 									</select>
