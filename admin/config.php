@@ -172,13 +172,13 @@ function read()
 									<strong style="color: black;">Administrador / Usuario</strong>
 								</td>
 								<td>
-									<label><input type="checkbox" id="cbox1" value="d">D</label>
-									<label><input type="checkbox" id="cbox1" value="l">L</label>
-									<label><input type="checkbox" id="cbox1" value="m">M</label>
-									<label><input type="checkbox" id="cbox1" value="mi">Mi</label>
-									<label><input type="checkbox" id="cbox1" value="j">J</label>
-									<label><input type="checkbox" id="cbox1" value="v">V</label>
-									<label><input type="checkbox" id="cbox1" value="s">S</label>
+									<label><input type="checkbox" name="day[]" value="d">D</label>
+									<label><input type="checkbox" name="day[]" value="l">L</label>
+									<label><input type="checkbox" name="day[]" value="m">M</label>
+									<label><input type="checkbox" name="day[]" value="mi">Mi</label>
+									<label><input type="checkbox" name="day[]" value="j">J</label>
+									<label><input type="checkbox" name="day[]" value="v">V</label>
+									<label><input type="checkbox" name="day[]" value="s">S</label>
 								</td>
 								<td>
 									<select name="hora" id="hora" class="form-control">
