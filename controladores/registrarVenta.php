@@ -19,8 +19,9 @@ if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($
 		$cantPago = $_POST['cantPago'];
 		$cambio = $_POST['cambio'];
 		$factura = $_POST['factura'];
+		$metodo_pago = 1; //Se define el metodo de pago como efectivo por el momento
 
-		$sql = "INSERT INTO venta VALUES(NULL,NOW(),NOW(),?,?,?,?,?,?,?)";
+		$sql = "INSERT INTO venta VALUES(NULL,NOW(),NOW(),?,?,?,?,?,?,?,?)";
 		$insertar_venta = $conexion->prepare($sql);
 		$insertar_venta -> bindParam(1,$total);
 		$insertar_venta -> bindParam(2,$estado);
@@ -29,6 +30,7 @@ if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($
 		$insertar_venta -> bindParam(5,$cantPago);
 		$insertar_venta -> bindParam(6,$cambio);
 		$insertar_venta -> bindParam(7,$factura);
+		$insertar_venta -> bindParam(8,$metodo_pago);
 		$insertar_venta -> execute();
 		$resultado = $insertar_venta->rowCount();
 		if ($resultado>0){
@@ -46,8 +48,9 @@ if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($
 		$cantPago = $_POST['cantPago'];
 		$cambio = $_POST['cambio'];
 		$factura = $_POST['factura'];
+		$metodo_pago = 1; //Se define el metodo de pago como efectivo por el momento
 
-		$sql = "INSERT INTO venta VALUES(NULL,NOW(),NOW(),?,?,?,NULL,?,?,?)";
+		$sql = "INSERT INTO venta VALUES(NULL,NOW(),NOW(),?,?,?,NULL,?,?,?,?)";
 		$insertar_venta = $conexion->prepare($sql);
 		$insertar_venta -> bindParam(1,$total);
 		$insertar_venta -> bindParam(2,$estado);
@@ -55,6 +58,7 @@ if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($
 		$insertar_venta -> bindParam(4,$cantPago);
 		$insertar_venta -> bindParam(5,$cambio);
 		$insertar_venta -> bindParam(6,$factura);
+		$insertar_venta -> bindParam(7,$metodo_pago);
 		$insertar_venta -> execute();
 		$resultado = $insertar_venta->rowCount();
 		if ($resultado>0){
@@ -68,13 +72,6 @@ if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($
 }
 
 if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && isset($_POST['pk_venta'])) {
-
-	//Buscar en venta_producto los los PKs y cantidades correspondientes a la venta
-		//Reccorres y buscar unu a uno, en la tabla de productos para ver si el Stock cubre la cantidad deseada
-			//Si todas lac antidades de los productos se pueden cibrir con el Stock existente, realizar la compra
-				//Ir a disminuir el stock de cada producto comprado
-					//Actualizar el campo de factura a 0, en la tabla de venta
-			//Si no, Informar al usuario en que producto no se cubre la cantidad requerida
 
 	$sql_vp_p = "SELECT vp.cant_producto,vp.fk_producto,p.stok,p.nombre FROM venta_producto vp, producto p WHERE vp.fk_producto=p.pk_producto AND fk_venta=? AND pk_producto IN (SELECT venta_producto.fk_producto FROM venta_producto WHERE venta_producto.fk_venta=?) GROUP BY vp.fk_producto";
 	$statement_vp = $conexion->prepare($sql_vp_p);

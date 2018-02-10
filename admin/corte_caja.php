@@ -177,23 +177,24 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 				<div class="signin-form profile">
 					<h3 class="agileinfo_sign">Confirmacion de corte de caja</h3>
 					<div class="login-form">
-						<form action="#" method="post">
-							<div class="form-group">
-								<label>Nombre de Usuario</label>
-								<input type="text" class="form-control" name="user" id="user">
-							</div>
-							<div class="form-group">
-								<label>Contraseña</label>
-								<input type="password" class="form-control" name="pass" id="pass">
-							</div>
-							<div class="form-group">
-								<label>Cantidad en caja</label>
-								<input type="number" class="form-control" name="cantidadEfec" id="cantidadEfec">
-							</div>
-							<div class="form-group">
-								<input type="submit" value="Confirmar">
-							</div>
-						</form>
+						<div class="jumbotron">
+							<!-- <form action="#" method="post"> -->
+							<table class="table table-hover table-striped table-bordered">
+								<thead>
+									<tr>
+										<th><strong style="color: black;">Metodo de pago</strong></th>
+										<th><strong style="color: black;">Esperado</strong></th>
+										<th><strong style="color: black;">Otra cant.</strong></th>
+										<th><strong style="color: black;">Correcto</strong></th>
+										<th><strong style="color: black;">Contado</strong></th>
+									</tr>
+								</thead>
+								<tbody id="tb_infoCorte">
+
+								</tbody>
+							</table>
+							<!-- </form> -->
+						</div>
 					</div>
 				</div>
 			</div>
@@ -219,7 +220,6 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 
 <script type="text/javascript">
 	function corteCaja() {
-
 		$.ajax({
 			url: "../controladores/corteCaja.php",
 			type: "post",
@@ -251,13 +251,177 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 			seconds="0"+seconds;
 		}
 		
-		if (hours>=4 && minutes>=0 && dn=="pm") {
+		if (hours>=8 && minutes>=0 && dn=="pm") {
 			corteCaja();
 		}
 	}
+
+	//Variable global para el total del corte
+	var total = 0;
+	var ventasTotales = 0;
+	var pk_corcaja = "";
 	$(document).ready(function(){
 		validBtnCorteCaja();
 	});
+
+	function infoMontos(id) {
+		pk_corcaja = id;
+		$.ajax({
+			url: "../controladores/corteCaja.php",
+			type: "post",
+			dataType: 'json',
+			data:{pk_corcaja:id},
+			cache: false,
+			success: function (responce) {
+				var monto_efectivo;
+				var monto_tarjeta;
+				$(responce).each(function(index, value){
+					monto_efectivo = value.monto_efectivo;
+					monto_tarjeta = value.monto_tarjeta;
+					total = value.total;
+					ventasTotales = value.total;
+				});
+
+				$("#tb_infoCorte").empty();
+
+				if (monto_efectivo>1) {
+					$("#tb_infoCorte").append('<tr class="1"><td><strong style="color: black;">Efectivo</strong></td><td><strong style="color: black;">$'+monto_efectivo+'</strong></td><td><strong style="color: black;"><button class="btn btn-warning" onclick="editarCant(1,'+monto_efectivo+');"><i class="fa fa-pencil" aria-hidden="true"></i></button></strong></td><td><strong style="color: black;"><button class="btn btn-success" id="1" onclick="contado_efectivo(this.id,'+monto_efectivo+');"><i class="fa fa-check" aria-hidden="true"></i></button></strong></td><td><strong style="color: black;"></strong></td></tr>');
+				}else{
+					$("#tb_infoCorte").append('<tr class="1"><td><strong style="color: black;">Efectivo</strong></td><td><strong style="color: black;">$'+monto_efectivo+'</strong></td><td><strong style="color: black;"></strong></td><td><strong style="color: black;"></strong></td><td><strong style="color: black;">$0</strong></td></tr>');
+				}
+
+				if (monto_tarjeta>1) {
+					$("#tb_infoCorte").append('<tr class="2"><td><strong style="color: black;">Tarjeta</strong></td><td><strong style="color: black;">$'+monto_tarjeta+'</strong></td><td><strong style="color: black;"><button class="btn btn-warning" onclick="editarCant(2,'+monto_efectivo+');"><i class="fa fa-pencil" aria-hidden="true"></i></button></strong></td><td><strong style="color: black;"><button class="btn btn-success" id="2" onclick="contado_tarjeta(this.id,'+monto_tarjeta+');"><i class="fa fa-check" aria-hidden="true"></i></button></strong></td><td><strong style="color: black;"></strong></td></tr>');
+				}else{
+					$("#tb_infoCorte").append('<tr class="2"><td><strong style="color: black;">Tarjeta</strong></td><td><strong style="color: black;">$'+monto_tarjeta+'</strong></td><td><strong style="color: black;"></strong></td><td><strong style="color: black;"></strong></td><td><strong style="color: black;">$0</strong></td></tr>');
+				}
+				
+
+				$("#tb_infoCorte").append('<tr class="3"><td><strong style="color: black;">TOTAL</strong></td><td colspan="2"><strong style="color: black;">$'+total+'</strong></td><td colspan="2"><strong style="color: red;">$-'+total+'</strong></td></tr>');
+			}
+		});
+	}
+
+	function editarCant(id_fila, monto_efectivo) {
+		$('.'+id_fila).find('td').eq(4).html('<input type="number" min="1" name="otrcant" id="otrcant"> <button class="btn btn-success" onclick="confirmCant('+id_fila+','+monto_efectivo+');">Ok</button>');
+	}
+
+	function confirmCant(id_fila, monto_efectivo) {
+		var nueva_cant = $("#otrcant").val();
+
+		if (nueva_cant<monto_efectivo && nueva_cant!=0) {
+			total = (total-nueva_cant);
+
+			$('.'+id_fila).find('td').eq(4).html('<strong style="color: black;">$'+nueva_cant+'</strong>');
+
+			//Se elimina el boton de editar cantidad en la fila correspondiente
+			$('.'+id_fila).find('td').eq(2).html('');
+			//Se remueve el boton de aprobar contado
+			$("#"+id_fila).remove();
+
+			$('.3').find('td').eq(2).html('<strong style="color: red;">$-'+total+'</strong>');
+
+			contadoFaltante();
+		}else{
+			alert("La nueva catidad no puede ser mayor o igual a la ganancia total, y tampoco pude dejar el campo vacio!!");
+		}
+		
+	}
+
+	function contado_efectivo(id_fila, monto_efectivo) {
+		total = (total-monto_efectivo);
+
+		var color="red";
+		if (total==0) {
+			$("#tb_infoCorte").append('<tr><td colspan="5"><label>¿Cuanto efectivo decea conservar en caja? </label><input type="number" min="1" step="1.0" name="saveCaja" id="saveCaja" class="form-control" required=""></td></tr>');
+			$("#tr_acept").remove();
+			$("#tb_infoCorte").append('<tr id="tr_acept"><td colspan="5"><button class="btn btn-success form-control" onclick="realizarCorteCaja();">Realizar Corte de Caja</button></td></tr>');
+			color="green";
+		}
+
+		$('.'+id_fila).find('td').eq(4).html('<strong style="color: black;">$'+monto_efectivo+'</strong>');
+		$('.3').find('td').eq(2).html('<strong style="color: '+color+';">$-'+total+'</strong>');
+
+		$("#"+id_fila).remove();
+		//Se elimina el boton de editar cantidad en la fila correspondiente
+		$('.'+id_fila).find('td').eq(2).html('');
+		
+		contadoFaltante();
+
+	}
+
+	function contado_tarjeta(id_fila, monto_tarjeta) {
+		total = (total-monto_tarjeta);
+
+		var color="red";
+		if (total==0) {
+			$("#tb_infoCorte").append('<tr><td colspan="5"><label>¿Cuanto efectivo decea conservar en caja? </label><input type="number" min="1" step="1.0" name="saveCaja" id="saveCaja" class="form-control" required=""></td></tr>');
+			$("#tr_acept").remove();
+			$("#tb_infoCorte").append('<tr id="tr_acept"><td colspan="5"><button class="btn btn-success form-control" onclick="realizarCorteCaja();">Realizar Corte de Caja</button></td></tr>');
+			color="green";
+		}
+
+		$('.'+id_fila).find('td').eq(4).html('<strong style="color: black;">$'+monto_tarjeta+'</strong>');
+		$('.3').find('td').eq(2).html('<strong style="color: '+color+';">$-'+total+'</strong>');
+
+		$("#"+id_fila).remove();
+		//Se elimina el boton de editar cantidad en la fila correspondiente
+		$('.'+id_fila).find('td').eq(2).html('');
+
+		contadoFaltante();
+		
+	}
+
+	function contadoFaltante() {
+		var fila1 = $('.1').find('td').eq(4).text();
+		var fila2 = $('.2').find('td').eq(4).text();
+		if (fila1!="" && fila2!="" && total>0) {
+			$("#tb_infoCorte").append('<tr><td colspan="5"><h5>Oops, parece que no cuadran las ventas totales, han faltado $'+total+' para completar las ventas totales del dia :(</h5></td></tr>');
+			$("#tb_infoCorte").append('<tr><td colspan="5"><label>¿Cuanto efectivo decea conservar en caja? </label><input type="number" min="1" step="1.0" name="saveCaja" id="saveCaja" class="form-control" required=""></td></tr>');
+			$("#tr_acept").remove();
+			$("#tb_infoCorte").append('<tr id="tr_acept"><td colspan="5"><button class="btn btn-warning form-control" onclick="realizarCorteCaja();">Realizar Corte de Caja</button></td></tr>');
+		}
+	}
+
+	function realizarCorteCaja() {
+		var saveCaja = $("#saveCaja").val();
+		if (saveCaja && saveCaja>0.9) {
+			if (saveCaja<=ventasTotales) {
+				$.ajax({
+					url: "../controladores/corteCaja.php",
+					type: "post",
+					cache: false,
+					data: {caja:saveCaja,pk_corcaja:pk_corcaja},
+					success: function (responce) {
+						if (responce=="true") {
+							alert('Corte de caja realizado con exito!!');
+							location.href ="corte_caja.php";
+						}else{
+							alert('Oop, algo salio mal!! ;(');
+						}
+					}
+				});
+			}else{
+				alert("La cantidad maxima disponible para dejar en caja es de: $"+ventasTotales);
+			}
+		}else{
+			$.ajax({
+				url: "../controladores/corteCaja.php",
+				type: "post",
+				cache: false,
+				data: {caja:0,pk_corcaja:pk_corcaja},
+				success: function (responce) {
+					if (responce=="true") {
+						alert('Corte de caja realizado con exito!!');
+						location.href ="corte_caja.php";
+					}else{
+						alert('Oop, algo salio mal!! ;(');
+					}
+				}
+			});
+		}
+		
+	}
 
 </script>
 <!-- //js -->
