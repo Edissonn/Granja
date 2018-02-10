@@ -93,8 +93,7 @@
 												<i class="glyphicon glyphicon-th-list" aria-hidden="true"></i>Configuraciones<span class="caret"></span>
 											</a>
 											<ul class="dropdown-menu">
-												<li><a href="config.php"><i class="fa fa-users" aria-hidden="true"></i>Tiempo de session</a></li>
-												<li><a href="#"><i class="fa fa-truck" aria-hidden="true"></i>Horario de cortes de caja</a></li>
+												<li><a href="config.php"><i class="fa fa-users" aria-hidden="true"></i>Configuraciones</a></li>
 											</ul>
 										</li>
 									</ul>

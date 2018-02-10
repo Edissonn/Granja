@@ -146,9 +146,87 @@ function read()
 	<!-- hasta termina el formulario -->
 	<!-- banner-bottom -->
 	<div class="clearfix"> </div>
+	<div class="container">
+		<h2 class="title-w3-agileits inner">Configuracion de horarios de cortes de caja</h2>
+	</div>
+	<br>
+	<br>
+	<div class="container">
+		<div class="jumbotron">
+			<form action="../controladores/saveConfig.php" method="POST">
+				<div class="container">
+					<table class="table table-hover table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>Tipo de Usuario</th>
+								<th>Dias de la semana</th>
+								<th>Hora</th>
+								<th>Minutos</th>
+								<th>Turno</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<strong style="color: black;">Administrador / Usuario</strong>
+								</td>
+								<td>
+									<label><input type="checkbox" id="cbox1" value="d">D</label>
+									<label><input type="checkbox" id="cbox1" value="l">L</label>
+									<label><input type="checkbox" id="cbox1" value="m">M</label>
+									<label><input type="checkbox" id="cbox1" value="mi">Mi</label>
+									<label><input type="checkbox" id="cbox1" value="j">J</label>
+									<label><input type="checkbox" id="cbox1" value="v">V</label>
+									<label><input type="checkbox" id="cbox1" value="s">S</label>
+								</td>
+								<td>
+									<select name="hora" id="hora" class="form-control">
+										<?php
+										for ($i=0; $i < 12; $i++) {
+											?>
+											<option value="<?php echo ($i+1); ?>">
+												<?php echo ($i+1); ?>
+											</option> 
+											<?php
+										}
+										?>
+									</select>
+								</td>
+								<td>
+									<select name="minutos" id="minutos" class="form-control">
+										<?php
+										for ($i=0; $i < 60; $i++) {
+											?>
+											<option value="<?php echo ($i+1); ?>">
+												<?php echo ($i+1); ?>
+											</option> 
+											<?php
+										}
+										?>
+									</select>
+								</td>
+								<td>
+									<select name="minutos" id="minutos" class="form-control">
+										<option value="am">AM</option>
+										<option value="pm">PM</option>
+									</select>
+								</td>
+								<td>
+									<input type="submit" name="save" value="Guardar" id="save" class="form-control btn btn-success">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 </div>
 </div>
+<br>
+<br>
 <br>
 
 <!-- //single_page -->
