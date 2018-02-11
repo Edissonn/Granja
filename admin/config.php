@@ -60,6 +60,25 @@ function read()
 		return $timeSession;
 	}
 }
+
+function readConfCortes()
+{	
+	$timeSession = "Error al obtener la configuracion de Cortes de Caja!!";
+	if (fopen('../admin/confCortes.txt', 'r')) {
+		$archivo = fopen('../admin/confCortes.txt', 'r');
+		$linea = "";
+		while (!feof($archivo)) {
+			$linea = fgets($archivo);
+		}
+		if ($linea!="") {
+			return $linea;
+		}else{
+			return $timeSession;
+		}
+	}else{
+		return $timeSession;
+	}
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -153,7 +172,7 @@ function read()
 	<br>
 	<div class="container">
 		<div class="jumbotron">
-			<form action="../controladores/saveConfig.php" method="POST">
+			<form action="../controladores/saveConfig.php" method="POST" name="frmSaveConfigCorreCaja" id="frmSaveConfigCorreCaja">
 				<div class="container">
 					<table class="table table-hover table-striped table-bordered">
 						<thead>
@@ -168,20 +187,26 @@ function read()
 						</thead>
 						<tbody>
 							<tr>
+								<td colspan="6" id="tr_info">
+									
+								</td>
+							</tr>
+							<tr>
 								<td>
 									<strong style="color: black;">Administrador / Usuario</strong>
 								</td>
 								<td>
-									<label><input type="checkbox" name="day[]" value="d">D</label>
-									<label><input type="checkbox" name="day[]" value="l">L</label>
-									<label><input type="checkbox" name="day[]" value="m">M</label>
-									<label><input type="checkbox" name="day[]" value="mi">Mi</label>
-									<label><input type="checkbox" name="day[]" value="j">J</label>
-									<label><input type="checkbox" name="day[]" value="v">V</label>
-									<label><input type="checkbox" name="day[]" value="s">S</label>
+									<label><input type="checkbox" name="day[]" id="l" value="l">L</label>
+									<label><input type="checkbox" name="day[]" id="m" value="m">M</label>
+									<label><input type="checkbox" name="day[]" id="mi" value="mi">Mi</label>
+									<label><input type="checkbox" name="day[]" id="j" value="j">J</label>
+									<label><input type="checkbox" name="day[]" id="v" value="v">V</label>
+									<label><input type="checkbox" name="day[]" id="s" value="s">S</label>
+									<label><input type="checkbox" name="day[]" id="d" value="d">D</label>
 								</td>
 								<td>
-									<select name="hora" id="hora" class="form-control">
+									<select name="hora" id="hora" required="" class="form-control">
+										<option value="">Seleccione la hora</option>
 										<?php
 										for ($i=0; $i < 12; $i++) {
 											?>
@@ -194,7 +219,8 @@ function read()
 									</select>
 								</td>
 								<td>
-									<select name="minutos" id="minutos" class="form-control">
+									<select name="minutos" id="minutos" required="" class="form-control">
+										<option value="">Seleccione los minutos</option>
 										<?php
 										for ($i=0; $i < 60; $i++) {
 											?>
@@ -207,13 +233,14 @@ function read()
 									</select>
 								</td>
 								<td>
-									<select name="turno" id="turno" class="form-control">
+									<select name="turno" id="turno" class="form-control" required="">
+										<option value="">Seleccione un turno</option>
 										<option value="am">AM</option>
 										<option value="pm">PM</option>
 									</select>
 								</td>
 								<td>
-									<input type="submit" name="save" value="Guardar" id="save" class="form-control btn btn-success">
+									<input type="submit" value="Guardar" class="form-control btn btn-success">
 								</td>
 							</tr>
 						</tbody>
@@ -248,6 +275,27 @@ function read()
 <script type="text/javascript">
 	$(document).ready(function(){
 
+		var diasSemana = {'l':'Lunes','m':'Martes','mi':'Miercoles','j':'Jueves','v':'Viernes','s':'Sabado','d':'Domingo'};
+		var diasSelected = "";
+
+		$(<?php echo readConfCortes(); ?>).each(function(index, value) {
+			for (var i = 0; i < value.days.length; i++) {
+				$("#"+value.days[i]).prop('checked', true);
+
+				for (var propiedad in diasSemana) {
+					if (diasSemana.hasOwnProperty(propiedad)) {
+						if (value.days[i]==propiedad) {
+							diasSelected += diasSemana[propiedad]+",";
+						}
+					}
+				}
+			}
+			$('#hora option[value="'+value.hora+'"]').attr("selected", "selected");
+			$('#minutos option[value="'+value.minuto+'"]').attr("selected", "selected");
+			$('#turno option[value="'+value.turno+'"]').attr("selected", "selected");
+
+			$("#tr_info").append('<h4>Los usuarios pueden realizar los Cortes de Caja, justo despues de: '+value.hora+":"+value.minuto+":"+"00"+" "+value.turno+", los dias: "+diasSelected+"</h4>");
+		});
 	});
 
 </script>

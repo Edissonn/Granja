@@ -6,6 +6,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 -->
 <?php
 session_start();
+date_default_timezone_set("America/Bahia_Banderas");
 $nombre = "";
 
 //Validar si se ha iniciado session correctamente, y si los datos de la sesion estan puestos
@@ -38,6 +39,25 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 	$cortes_confirmados->execute();
 	$res_cortesConfirm = $cortes_confirmados->fetchAll();
 
+}
+
+function readConfCortes()
+{	
+	$timeSession = "Error al obtener la configuracion de Cortes de Caja!!";
+	if (fopen('../admin/confCortes.txt', 'r')) {
+		$archivo = fopen('../admin/confCortes.txt', 'r');
+		$linea = "";
+		while (!feof($archivo)) {
+			$linea = fgets($archivo);
+		}
+		if ($linea!="") {
+			return $linea;
+		}else{
+			return $timeSession;
+		}
+	}else{
+		return $timeSession;
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -201,7 +221,6 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 		</div>
 	</div>
 </div>
-
 <!-- //single_page -->
 <!-- footer -->
 <div class="agileinfo_copy_right">
@@ -219,6 +238,34 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 <script type="text/javascript" src="../js/lightbox.js"></script>
 
 <script type="text/javascript">
+
+	//Variable global para el total del corte
+	var total = 0;
+	var ventasTotales = 0;
+	var pk_corcaja = "";
+	$(document).ready(function(){
+		<?php 
+		$json = readConfCortes();
+		$data = json_decode($json);
+		$hora;
+		$minuto;
+		if ($data->hora<12) {
+			$hora = "0".$data->hora;
+		}else{
+			$hora = $data->hora;
+		}
+		if ($data->minuto<=9) {
+			$minuto = "0".$data->minuto;
+		}else{
+			$minuto = $data->minuto;
+		}
+		$horaCorte = $hora.":".$minuto.":"."00 ".$data->turno;
+		if (date('h:i:s a')>=$horaCorte) {
+			echo "corteCaja();";
+		}
+		?>
+	});
+
 	function corteCaja() {
 		$.ajax({
 			url: "../controladores/corteCaja.php",
@@ -229,40 +276,6 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 			}
 		});
 	}
-
-	function validBtnCorteCaja() {
-		var Digital=new Date();
-		var hours=Digital.getHours();
-		var minutes=Digital.getMinutes();
-		var seconds=Digital.getSeconds();
-		var dn="am";
-
-		if (hours>12){
-			dn="pm";
-			hours=hours-12;
-		}
-		if (hours==0){
-			hours=12;
-		}
-		if (minutes<=9){
-			minutes="0"+minutes;
-		}
-		if (seconds<=9){
-			seconds="0"+seconds;
-		}
-		
-		if (hours>=8 && minutes>=0 && dn=="pm") {
-			corteCaja();
-		}
-	}
-
-	//Variable global para el total del corte
-	var total = 0;
-	var ventasTotales = 0;
-	var pk_corcaja = "";
-	$(document).ready(function(){
-		validBtnCorteCaja();
-	});
 
 	function infoMontos(id) {
 		pk_corcaja = id;

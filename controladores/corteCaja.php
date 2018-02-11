@@ -6,10 +6,7 @@ require_once('../conexion.php');
 $obj_conexion = new Conexion();
 $conexion = $obj_conexion->conectar();
 
-$ano = date('Y');
-$mes = date('m');
-$dia = date('d');
-$fecha = $ano.'-'.$mes.'-'.$dia;
+$fecha = date('Y-m-d');
 
 if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && !isset($_POST['pk_corcaja']) && !isset($_POST['caja'])) {
 

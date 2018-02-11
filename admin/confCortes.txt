@@ -1,0 +1,1 @@
+{"days":["l","m","mi","j","v"],"hora":"8","minuto":"30","turno":"pm"}
