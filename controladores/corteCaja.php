@@ -24,7 +24,7 @@ if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($
 	}
 
 	//Cargar cortes de caja
-	$sql1 = "SELECT * FROM corte_caja WHERE status=0";
+	$sql1 = "SELECT pk_corcaja,fecha_corte,fecha_venta,DATE_FORMAT(hora,'%r') AS hora FROM corte_caja WHERE status=0";
 	$cortes_pendientes = $conexion->prepare($sql1);
 	$cortes_pendientes->execute();
 	$res_cortes = $cortes_pendientes->fetchAll();

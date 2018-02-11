@@ -97,7 +97,7 @@ function write($time_activity)
 
 function writeConfCortes($days, $hora, $minuto, $turno)
 {
-	$arrayJSON = ['days' => $days, 'hora' => $hora, 'minuto' => $minuto, 'turno' => $turno];
+	$arrayJSON = ['days' => $days, 'fecha' => date('Y-m-d'), 'hora' => $hora, 'minuto' => $minuto, 'turno' => $turno];
 	if (fopen('../admin/confCortes.txt', 'w+')) {
 		$archivo = fopen('../admin/confCortes.txt', 'w+');
 		fwrite($archivo, json_encode($arrayJSON));

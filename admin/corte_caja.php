@@ -34,7 +34,7 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 	//Si los datos esta puestos en session, se asignan los valores
 	$nombre = $_SESSION['nombre_admin'];
 
-	$sql2 = "SELECT * FROM corte_caja WHERE status=1";
+	$sql2 = "SELECT pk_corcaja,fecha_corte,fecha_venta,DATE_FORMAT(hora,'%r') AS hora,ganancias FROM corte_caja WHERE status=1";
 	$cortes_confirmados = $conexion->prepare($sql2);
 	$cortes_confirmados->execute();
 	$res_cortesConfirm = $cortes_confirmados->fetchAll();
@@ -169,7 +169,7 @@ function readConfCortes()
 								<strong style="color: black;"><?php echo $value['fecha_venta']; ?></strong>
 							</td>
 							<td>
-								<strong style="color: black;">----</strong>
+								<strong style="color: black;"><?php echo $value['ganancias']; ?></strong>
 							</td>
 							<td>
 								<button class="btn btn-success">Confirmar corte de caja</button>
@@ -249,7 +249,7 @@ function readConfCortes()
 		$data = json_decode($json);
 		$hora;
 		$minuto;
-		if ($data->hora<12) {
+		if ($data->hora<=9) {
 			$hora = "0".$data->hora;
 		}else{
 			$hora = $data->hora;
@@ -259,8 +259,18 @@ function readConfCortes()
 		}else{
 			$minuto = $data->minuto;
 		}
-		$horaCorte = $hora.":".$minuto.":"."00 ".$data->turno;
-		if (date('h:i:s a')>=$horaCorte) {
+		/////////////////Validar si el corte se puede realizar en el X dias de la semana///////////////
+		$diaActual = date('D');
+		$valid = 0;
+		$array_dias = array('l' => 'Mon', 'm' => 'Tue', 'mi' => 'Wed', 'j' => 'Thu', 'v' => 'Fri', 's' => 'Sat', 'd' => 'Sun');
+		$key_actual = array_search($diaActual, $array_dias);
+		if (in_array($key_actual, $data->days)) {
+			$valid = 1;
+		}
+		////////////////////////////////////////////////////////////////////////////////////////////////
+		$horaCorte = strtotime($data->fecha." ".$hora.":".$minuto.":"."00");
+		$horaActual = strtotime(date('Y-m-d h:i:s'));
+		if ($horaActual>=$horaCorte && $valid==1) {
 			echo "corteCaja();";
 		}
 		?>
@@ -335,6 +345,8 @@ function readConfCortes()
 			$('.3').find('td').eq(2).html('<strong style="color: red;">$-'+total+'</strong>');
 
 			contadoFaltante();
+
+			$('.1').find('td').eq(3).html('');
 		}else{
 			alert("La nueva catidad no puede ser mayor o igual a la ganancia total, y tampoco pude dejar el campo vacio!!");
 		}
@@ -356,6 +368,7 @@ function readConfCortes()
 		$('.3').find('td').eq(2).html('<strong style="color: '+color+';">$-'+total+'</strong>');
 
 		$("#"+id_fila).remove();
+		$('.'+id_fila).find('td').eq(3).html('');
 		//Se elimina el boton de editar cantidad en la fila correspondiente
 		$('.'+id_fila).find('td').eq(2).html('');
 		
