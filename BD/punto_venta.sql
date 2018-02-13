@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-02-2018 a las 01:18:20
+-- Tiempo de generación: 13-02-2018 a las 04:16:29
 -- Versión del servidor: 10.1.9-MariaDB
 -- Versión de PHP: 5.6.15
 
@@ -76,7 +76,7 @@ INSERT INTO `cliente` (`pk_cliente`, `nombre_cliente`, `edad`, `telefono_cel`, `
 --
 
 CREATE TABLE `corte_caja` (
-  `pk_corcaja` int(11) NOT NULL,
+  `pk_corcaja` smallint(11) NOT NULL,
   `fecha_corte` date NOT NULL,
   `fecha_venta` date NOT NULL,
   `hora` time NOT NULL,
@@ -85,15 +85,6 @@ CREATE TABLE `corte_caja` (
   `fk_usuario` smallint(11) DEFAULT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
---
--- Volcado de datos para la tabla `corte_caja`
---
-
-INSERT INTO `corte_caja` (`pk_corcaja`, `fecha_corte`, `fecha_venta`, `hora`, `ganancias`, `cant_caja`, `fk_usuario`, `status`) VALUES
-(30, '2018-02-02', '2018-02-02', '16:13:32', 410, NULL, NULL, 0),
-(34, '2018-02-05', '2018-02-03', '17:05:12', 90, NULL, NULL, 0),
-(35, '2018-02-05', '2018-02-05', '17:05:13', 90, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -143,8 +134,8 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`pk_producto`, `nombre`, `ruta_img`, `codigo_barras`, `precio`, `fk_categoria`, `stok`, `importe`, `precioProveedor`, `fk_unidad`, `cant_producto`, `fk_provedor`, `estado`) VALUES
-(21, 'KEFIR YOGURT DE BULGAROS', '20171121181128eme.jpg', '7501293191684', 80, 2, 78, 10, 10, 2, 300, 4, 1),
-(22, 'SPICY MIX (MIZUNA)', '20171121181122esme (2).jpg', '7501839191684', 50, 2, 90, 20, 40, 2, 300, 5, 1),
+(21, 'KEFIR YOGURT DE BULGAROS', '20171121181128eme.jpg', '7501293191684', 80, 2, 76, 10, 10, 2, 300, 4, 1),
+(22, 'SPICY MIX (MIZUNA)', '20171121181122esme (2).jpg', '7501839191684', 50, 2, 83, 20, 40, 2, 300, 5, 1),
 (23, 'SPICY MIX (MOSTAZA)', '20171121181131esmeral.jpg', '4005900036643', 50, 2, 96, 0, 40, 2, 300, 5, 1);
 
 -- --------------------------------------------------------
@@ -253,17 +244,17 @@ CREATE TABLE `venta` (
   `fk_cliente` smallint(6) DEFAULT NULL,
   `cant_pago` float NOT NULL DEFAULT '0',
   `cambio` float NOT NULL DEFAULT '0',
-  `factura` int(11) NOT NULL
+  `factura` int(11) NOT NULL,
+  `tipo_pago` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `venta`
 --
 
-INSERT INTO `venta` (`pk_venta`, `fecha`, `hora`, `total`, `estado`, `fk_usuario`, `fk_cliente`, `cant_pago`, `cambio`, `factura`) VALUES
-(15, '2018-02-02', '16:04:58', 140, 1, 5, 1, 200, 60, 0),
-(19, '2018-02-03', '17:00:30', 90, 1, 5, NULL, 100, 10, 0),
-(20, '2018-02-05', '17:00:49', 90, 1, 5, 1, 100, 10, 0);
+INSERT INTO `venta` (`pk_venta`, `fecha`, `hora`, `total`, `estado`, `fk_usuario`, `fk_cliente`, `cant_pago`, `cambio`, `factura`, `tipo_pago`) VALUES
+(27, '2018-02-11', '11:51:29', 70, 1, 5, 1, 80, 10, 0, 1),
+(28, '2018-02-11', '11:51:51', 70, 1, 5, 4, 100, 30, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -284,9 +275,8 @@ CREATE TABLE `venta_producto` (
 --
 
 INSERT INTO `venta_producto` (`pk_vp`, `cant_producto`, `cant_importe`, `fk_producto`, `fk_venta`) VALUES
-(86, 2, 40, 22, 15),
-(90, 1, 10, 21, 19),
-(91, 1, 10, 21, 20);
+(98, 1, 20, 22, 27),
+(99, 1, 20, 22, 28);
 
 --
 -- Índices para tablas volcadas
@@ -387,7 +377,7 @@ ALTER TABLE `cliente`
 -- AUTO_INCREMENT de la tabla `corte_caja`
 --
 ALTER TABLE `corte_caja`
-  MODIFY `pk_corcaja` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `pk_corcaja` smallint(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `localidad`
 --
@@ -422,12 +412,12 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `venta`
 --
 ALTER TABLE `venta`
-  MODIFY `pk_venta` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `pk_venta` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 --
 -- AUTO_INCREMENT de la tabla `venta_producto`
 --
 ALTER TABLE `venta_producto`
-  MODIFY `pk_vp` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `pk_vp` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 --
 -- Restricciones para tablas volcadas
 --
