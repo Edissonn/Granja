@@ -40,7 +40,7 @@ if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin'])) {
 	if ($updateProducto->rowCount()>0){
 		echo "<html>
 		<head>
-			<meta http-equiv = 'REFRESH' content='0 ; ../admin/index.php'>
+			<meta http-equiv = 'REFRESH' content='0 ; url=../admin/productos_nuevos.php'>
 		</head>
 		<body >
 			<script>
@@ -50,20 +50,22 @@ if (isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin'])) {
 		</html>
 		";
 	}else{
-		// echo "<html>
-		// <head>	
-		// 	<meta http-equiv = 'REFRESH' content='0 ; url=../admin/index.php'>
-		// </head>
-		// <body>
+		echo "<html>
+		<head>	
+			<meta http-equiv = 'REFRESH' content='0 ; url=../admin/productos_nuevos.php'>
+		</head>
+		<body>
 
-		// 	<script>
-		// 		alert('No se actualizaron los datos :(');
-		// 	</script>
-		// </body>
-		// </html>
-		// ";
+			<script>
+				alert('No se actualizaron los datos :(');
+			</script>
+		</body>
+		</html>
+		";
 	}
 	$updateProducto->closeCursor();
+}else{
+	header("location: ../admin/index.php");
 }
 
 ?>

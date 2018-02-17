@@ -264,14 +264,15 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 							<th>ID.</th>
 							<th>Imagen</th>
 							<th>Nombre</th>
-							<th>Codigo de Barras</th>
+							<th>Cod. Barras</th>
 							<th>Categoria</th>
-							<th>Precio Publico</th>
+							<th>Precio al Publico</th>
 							<th>Importe</th>
-							<th>Precio de Proveedor</th>
+							<th>Precio Proveedor</th>
 							<th>Stock</th>
-							<th>Unidad de Medida</th>
-							<th>Contenido de Producto</th>
+							<th>Usd de Medida</th>
+							<th>Contenido Producto</th>
+							<th>Proveedor</th>
 							<th>Editar</th>
 							<th>Aumentar Stok</th>
 							<th>Eliminar</th>
@@ -368,7 +369,7 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 										<td>
 											<div class="form-group">
 												<label for="choose">Codigo:</label>
-												<input type="text" class="form-control" class="form-control" id="codigoProducto" name="codigoProducto" maxlength="13" minlength="5" required="" placeholder="190865431728364759">
+												<input type="text" class="form-control" id="codigoProducto" name="codigoProducto" maxlength="13" minlength="5" required="">
 											</div>
 										</td>
 									</tr>
@@ -503,26 +504,27 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 			</div>
 		</div>
 	</div>
-	<!-- //ModaEditarProducto -->
+</div>
+<!-- //ModaEditarProducto -->
 
-	<!-- //single_page -->
-	<!-- footer -->
-	<div class="agileinfo_copy_right">
-		<div class="container">
-			<div class="agileinfo_copy_right_left">
-				<p>© 2017 El Paraiso Granja Organica Sostenible. Todos los derechos reservados | Diseñado por <a href="https://www.facebook.com/J.AntonioRamirezC.10">Antonio Ramirez</a></p>
-			</div>
-			<div class="clearfix"> </div>
+<!-- //single_page -->
+<!-- footer -->
+<div class="agileinfo_copy_right">
+	<div class="container">
+		<div class="agileinfo_copy_right_left">
+			<p>© 2017 El Paraiso Granja Organica Sostenible. Todos los derechos reservados | Diseñado por <a href="https://www.facebook.com/J.AntonioRamirezC.10">Antonio Ramirez</a></p>
 		</div>
+		<div class="clearfix"> </div>
 	</div>
-	<!-- //footer -->
-	<!-- js -->
-	<script type="text/javascript" src="../js/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="../js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" src="../js/lightbox.js"></script>
+</div>
+<!-- //footer -->
+<!-- js -->
+<script type="text/javascript" src="../js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="../js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../js/lightbox.js"></script>
 
-	<script type="text/javascript">
-		$(document).ready(function(){
+<script type="text/javascript">
+	$(document).ready(function(){
 		// $( ".target" ).change(function() {
 		// 	alert( "Se ha detectado un cambio" );
 		// });
@@ -531,8 +533,8 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 		listar();
 	});
 
-		var listar = function(){
-			var table = $('#tb_productos').DataTable({
+	var listar = function(){
+		var table = $('#tb_productos').DataTable({
 
 				//Numero de registros a mostrar en el DataTable
 				"lengthMenu": [[10, 20], [10, 20]],
@@ -566,6 +568,7 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 				{"data":"stok"},
 				{"data":"unidad"},
 				{"data":"cant_producto"},
+				{"data":"nombre_provedor"},
 				{"defaultContent":"<a href='#myModalEditar' class='editar btn btn-success' data-toggle='modal'>Editar</a>"},
 				{"defaultContent":"<a href='#myModalStock' class='stock btn btn-success' data-toggle='modal'>Aumentar Stock</a>"},
 				{"defaultContent":"<img src='../img/delete.png' href='#' class='eliminar_piezas btn btn-default'>"}
@@ -618,10 +621,10 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 					return $(this).text() == categoria;
 				}).prop('selected', true);
 				//Cargar el proveedor como selecciona por defecto
-				// var categoria = data.nom_categoria;
-				// $("#categoriaProducto option").filter(function(){
-				// 	return $(this).text() == categoria;
-				// }).prop('selected', true);
+				var proveedor = data.nombre_provedor;
+				$("#proveedorProducto option").filter(function(){
+					return $(this).text() == proveedor;
+				}).prop('selected', true);
 
 			});
 		}
