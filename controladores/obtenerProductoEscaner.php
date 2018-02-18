@@ -7,7 +7,7 @@ $conexion = $obj_conexion->conectar();
 if((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($_SESSION['nombre_admin']) || isset($_SESSION['nombre_user'])) && isset($_POST['codigoBarras']) && isset($_POST['cantProducto']))
 {
 
-	$sql = "SELECT p.pk_producto,p.nombre,p.precio,p.importe,pro.nombre_provedor FROM producto p, provedor pro WHERE p.fk_provedor=pro.pk_provedor AND p.codigo_barras=? AND p.stok>=?";
+	$sql = "SELECT p.pk_producto,p.nombre,p.precio,p.importe,pro.nombre_provedor FROM producto p, provedor pro WHERE p.fk_provedor=pro.pk_provedor AND p.codigo_barras=? AND p.stok>=? AND p.estado=1";
 	$result = $conexion->prepare($sql);
 	$result->bindParam(1,$_POST['codigoBarras']);
 	$result->bindParam(2,$_POST['cantProducto']);

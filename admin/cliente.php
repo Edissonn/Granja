@@ -456,7 +456,7 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
                         	cache: false,
                         	success: function(resultado){
                         		if (resultado=="true") {
-                        			swal(data.nombre_cliente+" ha sido dato de baja con exito!","","info");
+                        			swal(data.nombre_cliente+" ha sido dado de baja con exito!","","info");
                         			listar();
                         		}else{
                         			swal("Error al dar de baja al cliente: "+data.nombre_cliente,"","error");

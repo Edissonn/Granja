@@ -633,6 +633,11 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 			$(tbody).on("click", "a.stock", function(){
 				var data = table.row( $(this).parents("tr") ).data();
 				$("#pk_producto").val(data.pk_producto);
+				//Cargar el proveedor como selecciona por defecto
+				var proveedor = data.nombre_provedor;
+				$("#pk_proveedor option").filter(function(){
+					return $(this).text() == proveedor;
+				}).prop('selected', true);
 			});
 		}
 

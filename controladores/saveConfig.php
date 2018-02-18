@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set("America/Bahia_Banderas");
 if(isset($_SESSION['pk_admin']) && isset($_SESSION['nombre_admin']) && isset($_POST['time_activity']))
 {
 	$base = 60;

@@ -62,14 +62,14 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 	<link rel="stylesheet" type="text/css" href="../css/sweetalert.css">
 	<link href="../css/font-awesome.css" rel="stylesheet">
 	<style>
-	.selected{
-		cursor: pointer;
-	}
-	.selected:hover{
-		background-color: #4BB036;
-		color: white;
-	}
-</style>
+		.selected{
+			cursor: pointer;
+		}
+		.selected:hover{
+			background-color: #4BB036;
+			color: white;
+		}
+	</style>
 </head>
 
 <body>
@@ -99,7 +99,7 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 		<select class="form-control" name="pk_cliente" id="pk_cliente">
 			<option value="">Selecciona un cliente</option>
 			<?php
-			$sql_clientes = "SELECT * FROM cliente";
+			$sql_clientes = "SELECT * FROM cliente WHERE estado=1";
 			$obtener_cliente = $conexion->prepare($sql_clientes);
 			$obtener_cliente->execute();
 			if ($obtener_cliente->rowCount()>0) {
