@@ -19,7 +19,7 @@ require_once('../conexion.php');
 $objet_conexion = new Conexion();
 $conexion = $objet_conexion->conectar();
 
-date_default_timezone_set("America/Mazatlan");
+date_default_timezone_set("America/Bahia_Banderas");
 
 $nombre_cliente = "-------";
 
@@ -46,6 +46,14 @@ $statement_listaProductos->bindParam(1, $pk_venta);
 $statement_listaProductos->execute();
 $result_listadoProductos = $statement_listaProductos->fetchAll();
 $statement_listaProductos->closeCursor();
+
+$query_importes = "SELECT SUM(vp.cant_importe) AS total_importe FROM venta v, venta_producto vp WHERE v.pk_venta=? AND v.pk_venta=vp.fk_venta";
+$statement_importe = $conexion->prepare($query_importes);
+$statement_importe->bindParam(1, $pk_venta);
+$statement_importe->execute();
+$result_importe = $statement_importe->fetchAll();
+$statement_importe->closeCursor();
+
 
 class PDF_JavaScript extends FPDF {
 
@@ -122,7 +130,7 @@ foreach ($result_listadoProductos as $value) {
 	$calculador += $num_lineas*1.5;
 }
 //$alto = $calculador+16.4;
-$alto = $calculador+15;
+$alto = $calculador+12;
 
 $pdf = new PDF_AutoPrint('P','cm',array(8,$alto));
 $pdf->AddPage();
@@ -130,30 +138,31 @@ $pdf->SetMargins(0.4,0.5,1.2);
 $pdf->SetAutoPageBreak(false,2);
 $pdf->SetFont('Arial','B',6.3);
 
-$pdf->Image('../img/logoP.jpeg', 0.2, 0, 2.2, 1.8,'JPEG');
+$pdf->Image('../img/logoP.jpeg', 2.5, 0, 3, 2,'JPEG');
 $pdf->Ln(0.2);
 
 //Informacion principal del ticket
-$pdf->Ln(0.4);
-$pdf->Cell(0,0,'ELPARAISO ',0,1,'C');
-$pdf->Ln(0.4);
-$pdf->Cell(0,0,'Granja Organica Sostenible',0,1,'C');
-$pdf->Ln(0.4);
-$pdf->Cell(0,0,utf8_decode("MARTHA ELIZABETH KOVACS UNZUETA"),0,1,'C');
-$pdf->Ln(0.4);
-$pdf->Cell(0,0,'RFC: KOUM790925D4A',0,1,'C');
-$pdf->Ln(0.4);
-$pdf->Cell(0,0,'luis Echeverria #53, col. centro,',0,1,'C');
-$pdf->Ln(0.4);
-$pdf->Cell(0,0,'Lo de Marcos, Nay',0,1,'C');
-$pdf->Ln(0.4);
-$pdf->Cell(0,0,'Tel: 327 27 50 036',0,1,'C');
-$pdf->Ln(0.4);
-$pdf->Cell(0,0,'Cel: 322-111-5320',0,1,'C');
-$pdf->Ln(0.4);
-$pdf->Cell(0,0,'',0,1,'C');
-$pdf->Ln(0.2);
+// $pdf->Ln(0.4);
+// $pdf->Cell(0,0,'ELPARAISO ',0,1,'C');
+// $pdf->Ln(0.4);
+// $pdf->Cell(0,0,'Granja Organica Sostenible',0,1,'C');
+// $pdf->Ln(0.4);
+// $pdf->Cell(0,0,utf8_decode("MARTHA ELIZABETH KOVACS UNZUETA"),0,1,'C');
+// $pdf->Ln(0.4);
+// $pdf->Cell(0,0,'RFC: KOUM790925D4A',0,1,'C');
+// $pdf->Ln(0.4);
+// $pdf->Cell(0,0,'luis Echeverria #53, col. centro,',0,1,'C');
+// $pdf->Ln(0.4);
+// $pdf->Cell(0,0,'Lo de Marcos, Nay',0,1,'C');
+// $pdf->Ln(0.4);
+// $pdf->Cell(0,0,'Tel: 327 27 50 036',0,1,'C');
+// $pdf->Ln(0.4);
+// $pdf->Cell(0,0,'Cel: 322-111-5320',0,1,'C');
+// $pdf->Ln(0.4);
+// $pdf->Cell(0,0,'',0,1,'C');
+// $pdf->Ln(0.2);
 
+$pdf->setY(2.5);
 $pdf->SetFont('Arial','I',7.5);
 $pdf->Cell(0,0,'NO. ticket: '.$pk_venta,0,1,'C');
 $pdf->Ln(0.4);
@@ -162,7 +171,8 @@ $pdf->Cell(0,0,'Hora: '.$resultado[0]['hora'],0,1,'R');
 
 $pdf->setFillColor(232,232,232);
 $pdf->SetFont('Arial','B',7.5);
-$pdf->setY(5.8);
+
+$pdf->setY(3.3);
 $pdf->Cell(3,0.5,'Producto',1,0,'L',1);
 $pdf->setX(3.4);
 $pdf->Cell(1.2,0.5,'Cant.',1,0,'C',1);
@@ -268,13 +278,16 @@ $pdf->Cell(0,0,'Atendido por: '.$resultado[0]['nom_usuario'],0,1,'L');
 $pdf->Ln(0.4);
 $pdf->Cell(0,0,'Exp. en: Lo de marcos Nayarit',0,1,'L');
 $pdf->Ln(0.7);
-$pdf->Cell(0,0,'Total precio de contado:',0,1,'L');
+$pdf->Cell(0,0,'Total venta:',0,1,'L');
 $pdf->Cell(0,0,'$'.$resultado[0]['total'],0,1,'R');
+$pdf->Ln(0.4);
+$pdf->Cell(0,0,'Total de importes:',0,1,'L');
+$pdf->Cell(0,0,'$'.$result_importe[0]['total_importe'],0,1,'R');
 $pdf->Ln(0.4);
 $pdf->Cell(0,0,'____________________________________________',0,1,'L');
 $pdf->Ln(0.4);
-$pdf->Cell(0,0,'Pago inicial: ',0,1,'L');
-$pdf->Cell(0,0,'$'.$resultado[0]['total'],0,1,'R');
+$pdf->Cell(0,0,'Pago final: ',0,1,'L');
+$pdf->Cell(0,0,'$'.($resultado[0]['total']+$result_importe[0]['total_importe']),0,1,'R');
 $pdf->Ln(0.4);
 $pdf->Cell(0,0,'Pago efectivo: ',0,1,'L');
 $pdf->Cell(0,0,'$'.$resultado[0]['cant_pago'],0,1,'R');
@@ -282,15 +295,31 @@ $pdf->Ln(0.4);
 $pdf->Cell(0,0,'Cambio: ',0,1,'L');
 $pdf->Cell(0,0,'$'.$resultado[0]['cambio'],0,1,'R');
 $pdf->Ln(0.7);
-$pdf->Cell(0,0,'En partes electricas no hay garantia. Aclaraciones o',0,1,'L');
-$pdf->Ln(0.3);
-$pdf->Cell(0,0,'devoluciones de un dia para otro. Foraneos 2 dias   ',0,1,'L');
-$pdf->Ln(0.3);
-$pdf->Cell(0,0,'para devolucion. Motores 60 dias de garantia. Pre-   ',0,1,'L');
-$pdf->Ln(0.3);
-$pdf->Cell(0,0,'sentar este ticket para cualquier aclaracion o devo-   ',0,1,'L');
-$pdf->Ln(0.3);
-$pdf->Cell(0,0,'lucion.',0,1,'L');
+
+$pdf->Cell(0,0,utf8_decode("MARTHA ELIZABETH KOVACS UNZUETA"),0,1,'C');
+$pdf->Ln(0.4);
+$pdf->Cell(0,0,'RFC: KOUM790925D4A',0,1,'C');
+$pdf->Ln(0.4);
+$pdf->Cell(0,0,'luis Echeverria #53, col. centro,',0,1,'C');
+$pdf->Ln(0.4);
+$pdf->Cell(0,0,'Lo de Marcos, Nay',0,1,'C');
+$pdf->Ln(0.4);
+$pdf->Cell(0,0,'Tel: 327 27 50 036',0,1,'C');
+$pdf->Ln(0.4);
+$pdf->Cell(0,0,'Cel: 322-111-5320',0,1,'C');
+$pdf->Ln(0.4);
+$pdf->Cell(0,0,'',0,1,'C');
+$pdf->Ln(0.2);
+
+// $pdf->Cell(0,0,'En partes electricas no hay garantia. Aclaraciones o',0,1,'L');
+// $pdf->Ln(0.3);
+// $pdf->Cell(0,0,'devoluciones de un dia para otro. Foraneos 2 dias   ',0,1,'L');
+// $pdf->Ln(0.3);
+// $pdf->Cell(0,0,'para devolucion. Motores 60 dias de garantia. Pre-   ',0,1,'L');
+// $pdf->Ln(0.3);
+// $pdf->Cell(0,0,'sentar este ticket para cualquier aclaracion o devo-   ',0,1,'L');
+// $pdf->Ln(0.3);
+// $pdf->Cell(0,0,'lucion.',0,1,'L');
 
 try {
 	$pdf->AutoPrint(true);

@@ -50,7 +50,17 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
 		}
 	}else{
 		//Si no hay resultado, redireccione al index.php
-		echo "Datos Incorrectos!";
+		echo "<html>
+		<head>
+			<meta http-equiv = 'REFRESH' content='0 ; url=../../index.php'>
+		</head>
+		<body >
+			<script>
+				alert('El usuario o la contraseña, son incorrectos!');
+			</script>
+		</body>
+		</html>
+		";
 	}
 	$sentencia->closeCursor();
 

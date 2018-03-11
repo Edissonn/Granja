@@ -111,7 +111,7 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 				}
 			}else{
 				?>
-				<option value="">No hay medidas registradas</option>
+				<option value="">No hay clientes registrados</option>
 				<?php
 			}
 			$obtener_cliente->closeCursor();
@@ -155,6 +155,35 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 							</li>
 						</strong>
 					</ul>
+				</div>
+			</div>
+			<br>
+			<div class="panel panel-success">
+				<div class="panel-heading">
+					<h3 class="panel-title"><label>Devoluvion de enbaces</label></h3>
+				</div>
+				<div class="panel-body">
+					<div align="right">
+						<button class="btn btn-primary" onclick="cargar_productos_devolucion();">+</button>
+					</div>
+					<div class="table-responsive">
+						<table id="tablaDetalles" class="table table-bordered">
+							<thead>
+								<th style="color: black;">Producto</th>
+								<th style="color: black;">Cant. enbaces</th>
+								<th style="color: black;">Cant. efectivo</th>
+								<th style="color: black;"></th>
+							</thead>
+							<form name="myForm" id="myForm">
+								<tbody id="tbody_devoluciones">
+
+								</tbody>
+							</form>
+						</table>
+					</div>
+				</div>
+				<div class="panel-footer">
+
 				</div>
 			</div>
 			<br>
@@ -232,6 +261,33 @@ if (!isset($_SESSION['nombre_admin']) && !isset($_SESSION['pk_admin']) && !isset
 	<script src="../js/jquery.vide.min.js"></script>
 	<script src="../js/responsiveslides.min.js"></script>
 	<script type="text/javascript">
+
+		var filas_devolucion = 0;
+		var pksProductosDevoluciones = [];
+		var cantsEnbaces = [];
+		var cantsEfectivo = [];
+		function cargar_productos_devolucion() {
+			$.ajax({
+				url: "../controladores/agregar_devolucion.php",
+				type: "POST",
+				data: {cont:filas_devolucion++},
+				cache: false,
+				success: function(resultado) {
+					$("#tbody_devoluciones").append(resultado);
+				}
+			});
+		}
+
+		function elminar_filas_devolucion(id) {
+			$("#"+id).remove();
+		}
+
+		function total_importe_devolucion(id) {
+			//var cant = $('#'+id+' td .cant_em_devolucion').val();
+			//var pkpro = $('#'+id+' td .pk_producto_devolucion').val();
+			//console.log(pkpro);
+		}
+
 		function validarCampoCantidad(valor,id) {
 			var parseValor = parseFloat(valor);
 			if (valor<=0) {
@@ -591,23 +647,37 @@ function midificarCantC(id_fila){
 			}
 		}
 
+		//PROCESO PARA LA OBTENCION DE VALORES DE LAS DEVOLUCIONES
+		//Se vecian o se recetean los areglos
+		//pksProductosDevoluciones.length = 0;
+		//cantsEnbaces.length = 0;
+		//cantsEfectivo.length = 0;
+
+		//Se agregan los valores del los inputs de devoluciones
+		$(".pk_producto_devolucion").each(function() {
+			pksProductosDevoluciones.push($(this).val());
+		});
+		$(".cant_em_devolucion").each(function() {
+			cantsEnbaces.push($(this).val());
+		});
+		$(".cant_ef_devolucion").each(function() {
+			cantsEfectivo.push($(this).val());
+		});
+		//TERMINA EL PRCESO DE OBTENCION DE VALORES PARA LA DEVOLUCION
+
 		var pk_cliente = $("#pk_cliente").val();
 		var cantPago = parseFloat($("#cantidadPago").val());
 		var cambio=0;
 		var totalFinal = 0;
-		if (arrayImportes.length>0) {
-			totalFinal = calcularTotalYImportes(arraySubTotales);
-			cambio = parseFloat(cantPago-totalFinal);
-		}else{
-			totalFinal = calcularTotal(arraySubTotales);
-			cambio = parseFloat(cantPago-totalFinal);
-		}
+
+		totalFinal = calcularTotal(arraySubTotales);
+		cambio = parseFloat(cantPago-totalFinal);
 		
 		if (pk_cliente!="") {
 			//INSERTAR CON DATOS DE CLIENTE
 			if (venta_factura==0) {
 				if (cantPago>=totalFinal) {
-					insertWithCliente(<?php echo $_SESSION['pk_admin']; ?>,totalFinal,pk_cliente,cantPago,cambio,venta_factura);
+					insertWithCliente(<?php echo $_SESSION['pk_admin']; ?>,totalFinal,pk_cliente,cantPago,cambio,venta_factura, );
 				}else{
 					alert("La cantidad con la que se esta pagando es menor a la que se debe!");
 				}
@@ -635,7 +705,7 @@ function midificarCantC(id_fila){
 		$.ajax({
 			url:'../controladores/registrarVenta.php',
 			type: 'POST',
-			data:{pk_usuario:pk_usuario,total:totalFinal,cantPago:cantPago,cambio:cambio,factura:venta_factura},
+			data:{pk_usuario:pk_usuario,total:totalFinal,cantPago:cantPago,cambio:cambio,factura:venta_factura, pksdev:pksProductosDevoluciones.toString(), cantsem:cantsEnbaces.toString(), cantsef:cantsEfectivo.toString()},
 			cache: false,
 			success: function(resultado){
 				var pk_venta="";
@@ -704,7 +774,7 @@ function midificarCantC(id_fila){
 		$.ajax({
 			url:'../controladores/registrarVenta.php',
 			type: 'POST',
-			data:{pk_usuario:pk_usuario,total:totalFinal,pk_cliente:pk_cliente,cantPago:cantPago,cambio:cambio,factura:venta_factura},
+			data:{pk_usuario:pk_usuario,total:totalFinal,pk_cliente:pk_cliente,cantPago:cantPago,cambio:cambio,factura:venta_factura, pksdev:pksProductosDevoluciones.toString(), cantsem:cantsEnbaces.toString(), cantsef:cantsEfectivo.toString()},
 			cache: false,
 			success: function(resultado){
 				

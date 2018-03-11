@@ -35,6 +35,23 @@ if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($
 		$resultado = $insertar_venta->rowCount();
 		if ($resultado>0){
 			$idAutoincrement = $conexion->lastInsertId();
+
+			if (isset($_POST['pksdev']) && isset($_POST['cantsem']) && isset($_POST['cantsef']) && isset($_POST['pk_cliente'])) {
+				$pksdev = explode(',',$_POST['pksdev']);  
+				$cantsem = explode(',',$_POST['cantsem']);
+				$cantsef = explode(',',$_POST['cantsef']);
+
+				foreach ($pksdev as $key => $value) {
+					$sql = "INSERT INTO devoluciones VALUES(NULL,?,?,?,?,?)";
+					$insertar_devolucion = $conexion->prepare($sql);
+					$insertar_devolucion -> bindParam(1,$cantsem[$key]);
+					$insertar_devolucion -> bindParam(2,$cantsef[$key]);
+					$insertar_devolucion -> bindParam(3,$idAutoincrement);
+					$insertar_devolucion -> bindParam(4,$value);
+					$insertar_devolucion -> bindParam(5,$pk_cliente);
+					$insertar_devolucion->execute();
+				}
+			}
 			echo $idAutoincrement;
 		}else{
 			echo "false";
@@ -63,6 +80,23 @@ if ((isset($_SESSION['pk_admin']) || isset($_SESSION['pk_usuario'])) && (isset($
 		$resultado = $insertar_venta->rowCount();
 		if ($resultado>0){
 			$idAutoincrement = $conexion->lastInsertId();
+
+			if (isset($_POST['pksdev']) && isset($_POST['cantsem']) && isset($_POST['cantsef']) && !isset($_POST['pk_cliente'])) {
+				$pksdev = explode(',',$_POST['pksdev']);  
+				$cantsem = explode(',',$_POST['cantsem']);
+				$cantsef = explode(',',$_POST['cantsef']);
+
+				foreach ($pksdev as $key => $value) {
+					$sql = "INSERT INTO devoluciones VALUES(NULL,?,?,?,?,NULL)";
+					$insertar_devolucion = $conexion->prepare($sql);
+					$insertar_devolucion -> bindParam(1,$cantsem[$key]);
+					$insertar_devolucion -> bindParam(2,$cantsef[$key]);
+					$insertar_devolucion -> bindParam(3,$idAutoincrement);
+					$insertar_devolucion -> bindParam(4,$value);
+					$insertar_devolucion->execute();
+				}
+			}
+
 			echo $idAutoincrement;
 		}else{
 			echo "false";
