@@ -106,7 +106,7 @@ if (isset($_SESSION['nombre_admin']) && isset($_SESSION['pk_admin'])) {
 								</div>
 							</form>
 						</div>
-						<a href="enviar.php">Recuperar contraseña</a>
+						<a href="resPass.php">Recuperar contraseña</a>
 					</div>
 				</div>
 			</div>
