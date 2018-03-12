@@ -95,7 +95,6 @@ if (isset($_SESSION['nombre_admin']) && isset($_SESSION['pk_admin'])) {
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-
 					<div class="signin-form profile">
 						<h3 class="agileinfo_sign">Usuarios</h3>
 						<div class="login-form">
@@ -107,6 +106,7 @@ if (isset($_SESSION['nombre_admin']) && isset($_SESSION['pk_admin'])) {
 								</div>
 							</form>
 						</div>
+						<a href="enviar.php">Recuperar contraseña</a>
 					</div>
 				</div>
 			</div>
