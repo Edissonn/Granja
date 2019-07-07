@@ -11,7 +11,7 @@ if (isset($_SESSION['nombre_admin']) && isset($_SESSION['pk_admin'])) {
 <html lang="zxx">
 
 <head>
-	<title>Punto de venta "El paraiso Granja orgánica sostenible"</title>
+	<title>Prueba de cambios GITHUB</title>
 	<!-- custom-theme -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
